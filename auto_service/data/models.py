@@ -50,3 +50,6 @@ class ServiceMan(models.Model):
     address = models.CharField(max_length=100, blank=True)
     rating = models.DecimalField(max_digits=5, decimal_places=0, blank=True, null=True)
     is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
