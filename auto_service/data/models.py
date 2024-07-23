@@ -1,12 +1,26 @@
 from django.db import models
+from .my_validators import vat_number_validator
 
-
-# Create your models here.
 
 class Customer(models.Model):
+    COUNTRY_CHOICES = [
+        ("Bulgaria", "Bulgaria"),
+        ("Albania", "Albania"),
+        ("Bosnia and Herzegovina", "Bosnia and Herzegovina"),
+        ("Greece", "Greece"),
+        ("Kosovo", "Kosovo"),
+        ("North Macedonia", "North Macedonia"),
+        ("Montenegro", "Montenegro"),
+        ("Romania", "Romania"),
+        ("Serbia", "Serbia"),
+        ("Turkey", "Turkey"),
+        ("Croatia", "Croatia"),
+        ("Slovenia", "Slovenia")
+    ]
+
     name = models.CharField(max_length=100)
-    vat = models.DecimalField(max_digits=10, decimal_places=0, blank=True)
-    country = models.CharField(max_length=100)
+    vat = models.IntegerField(validators=[vat_number_validator])
+    country = models.CharField(max_length=100, choices=COUNTRY_CHOICES)
     city = models.CharField(max_length=100, blank=True)
     address = models.CharField(max_length=100, blank=True)
     is_active = models.BooleanField(default=True)
