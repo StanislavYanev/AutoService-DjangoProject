@@ -114,10 +114,7 @@ body {
 }
 
 .button {
-    display: flex;
-    align-items: center;
-    height: 500vh;
-    justify-content: center;
+    display: inline-block;
     position: relative;
     z-index: 1;
     overflow: hidden;
@@ -127,11 +124,12 @@ body {
     font-size: 1.5em;
     padding: 0.5em 1em;
     color: #535C91;
-    border: 0.15em solid black;
+    border: 0.15em solid #535C91;
     border-radius: calc(0.75em + 0.5em + 0.15em);
     transition: 4s;
-
 }
+
+
 .button:before, .button:after {
     content: "";
     position: absolute;
