@@ -12,8 +12,6 @@ body {
 
 }
 
-
-
 .container {
     position: absolute;
     width: 100%;
@@ -128,8 +126,6 @@ body {
     border-radius: calc(0.75em + 0.5em + 0.15em);
     transition: 4s;
 }
-
-
 .button:before, .button:after {
     content: "";
     position: absolute;

@@ -1,5 +1,5 @@
 from django.db import models
-from .my_validators import vat_number_validator, credit_limit_validator, rating_validator,phone_number_validator
+from .my_validators import vat_number_validator, credit_limit_validator, rating_validator, phone_number_validator
 
 
 class Customer(models.Model):
@@ -17,7 +17,9 @@ class Customer(models.Model):
         ("Croatia", "Croatia"),
         ("Slovenia", "Slovenia")
     ]
-
+    PAYMENT_CHOICES = [("cash", "Cash"),
+                       ("credit", "Credit")]
+    PAYMENT_TERMS_CHOICES = [('COD', 'Cash on Delivery'), ('CIA', 'Cash in Advance'), ('Net_15', '15 days'), ('Net_30', '30 days')]
     name = models.CharField(max_length=100)
     vat = models.IntegerField(validators=[vat_number_validator])
     country = models.CharField(max_length=100, choices=COUNTRY_CHOICES)
@@ -26,6 +28,8 @@ class Customer(models.Model):
     is_active = models.BooleanField(default=True)
     credit_limit = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True,
                                        validators=[credit_limit_validator])
+    payment_method = models.CharField(max_length=100, choices=PAYMENT_CHOICES)
+    payment_terms = models.CharField(max_length=100, choices=PAYMENT_TERMS_CHOICES)
     description = models.TextField(blank=True)
 
     def __str__(self):
@@ -82,7 +86,7 @@ class ServiceMan(models.Model):
     email = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
     address = models.CharField(max_length=100, blank=True)
-    rating = models.DecimalField(max_digits=5, decimal_places=4, blank=True, null=True,validators=[rating_validator])
+    rating = models.DecimalField(max_digits=5, decimal_places=4, blank=True, null=True, validators=[rating_validator])
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
