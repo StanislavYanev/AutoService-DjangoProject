@@ -30,3 +30,8 @@ def phone_number_validator(value):
         raise ValidationError('Phone number is too short')
     return value
 
+
+def quantity_validator(value):
+    if value <= 0:
+        raise ValidationError('Quantity cannot be negative')
+    return value

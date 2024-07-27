@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Car, Customer, Influencer, ServiceMan
+from .models import Car, Customer, Influencer, ServiceMan ,SparePart
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 admin.site.register(Customer)
 admin.site.register(Car)
 admin.site.register(Influencer)
 admin.site.register(ServiceMan)
-
+admin.site.register(SparePart)
 
 class CustomerAdmin(BaseUserAdmin):
     add_form = CustomUserCreationForm
@@ -36,3 +36,4 @@ class CustomerAdmin(BaseUserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, CustomerAdmin)
+

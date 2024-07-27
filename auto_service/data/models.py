@@ -1,5 +1,6 @@
 from django.db import models
-from .my_validators import vat_number_validator, credit_limit_validator, rating_validator, phone_number_validator
+from .my_validators import quantity_validator, phone_number_validator, rating_validator, credit_limit_validator, \
+    vat_number_validator
 
 
 class Customer(models.Model):
@@ -19,7 +20,8 @@ class Customer(models.Model):
     ]
     PAYMENT_CHOICES = [("cash", "Cash"),
                        ("credit", "Credit")]
-    PAYMENT_TERMS_CHOICES = [('COD', 'Cash on Delivery'), ('CIA', 'Cash in Advance'), ('Net_15', '15 days'), ('Net_30', '30 days')]
+    PAYMENT_TERMS_CHOICES = [('COD', 'Cash on Delivery'), ('CIA', 'Cash in Advance'), ('Net_15', '15 days'),
+                             ('Net_30', '30 days')]
     name = models.CharField(max_length=100)
     vat = models.IntegerField(validators=[vat_number_validator])
     country = models.CharField(max_length=100, choices=COUNTRY_CHOICES)
@@ -34,6 +36,12 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Payment(models.Model):
+    PAYMENT_CHOICES = [("cash", "Cash"),
+                       ("credit", "Credit")]
+    payment_method = models.CharField(max_length=100, choices=PAYMENT_CHOICES)
 
 
 class Influencer(models.Model):
@@ -91,3 +99,39 @@ class ServiceMan(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class SparePart(models.Model):
+    CURRENCY_CHOICES = [("BGN", "Bulgarian lev"),
+                        ("EUR", "Euro"), ]
+    AVAILABILITY_CHOICES = [
+        ("IN_STOCK", 'In Stock'),
+        ("PRE_ORDER", 'Pre Order'),
+    ]
+    part_number = models.CharField(max_length=20)
+    description = models.CharField(max_length=30)
+    quantity = models.IntegerField(null=True, validators=[quantity_validator])
+    availability = models.CharField(max_length=50, choices=AVAILABILITY_CHOICES)
+
+    @property
+    def availability_status(self):
+        if self.quantity > 0:
+            return "IN_STOCK"
+        else:
+            return "PRE_ORDER"
+
+    delivery_price = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=15, choices=CURRENCY_CHOICES)
+
+    @property
+    def customer_price(self):
+        value = float(self.delivery_price)
+        if self.currency == "EUR":
+            value /= 1.95583
+            self.currency = "BGN"
+        return f"{value * 1.3}:2.f"
+
+    part_code = models.CharField(max_length=5, blank=True)
+
+    def __str__(self):
+        return f"{self.part_code} {self.description}"
