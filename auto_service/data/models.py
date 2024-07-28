@@ -1,6 +1,5 @@
 from django.db import models
-from .my_validators import quantity_validator, phone_number_validator, rating_validator, credit_limit_validator, \
-    vat_number_validator
+from .my_validators import *
 
 
 class Customer(models.Model):
@@ -30,18 +29,11 @@ class Customer(models.Model):
     is_active = models.BooleanField(default=True)
     credit_limit = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True,
                                        validators=[credit_limit_validator])
-    payment_method = models.CharField(max_length=100, choices=PAYMENT_CHOICES)
-    payment_terms = models.CharField(max_length=100, choices=PAYMENT_TERMS_CHOICES)
+    payment_terms = models.CharField(max_length=30, choices=PAYMENT_TERMS_CHOICES)
     description = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
-
-
-class Payment(models.Model):
-    PAYMENT_CHOICES = [("cash", "Cash"),
-                       ("credit", "Credit")]
-    payment_method = models.CharField(max_length=100, choices=PAYMENT_CHOICES)
 
 
 class Influencer(models.Model):
@@ -81,7 +73,7 @@ class Car(models.Model):
     engine = models.CharField(max_length=55, blank=True, choices=ENGINE_CHOICES)
     date_built = models.DateField(blank=True, null=True)
     vin_number = models.CharField(max_length=55, blank=True)
-    customer = models.OneToOneField(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, related_name='car', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.make} - {self.model}"
@@ -134,4 +126,4 @@ class SparePart(models.Model):
     part_code = models.CharField(max_length=5, blank=True)
 
     def __str__(self):
-        return f"{self.part_code} {self.description}"
+        return f"{self.part_number} {self.description}"

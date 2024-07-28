@@ -2,27 +2,28 @@ from datetime import datetime, timedelta
 
 from django.db import models
 
-from data.models import Customer, Car, Payment, ServiceMan
+from data.models import Customer, Car, ServiceMan
 
 
 class WorkOrder(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     car = models.OneToOneField(Car, on_delete=models.CASCADE)
-    payment = models.OneToOneField(Payment, on_delete=models.CASCADE)
+    payment = models.CharField(max_length=30, blank=True, choices=[('Credit', "Credit"), ("Cash", "Cash")])
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
-class WorkOrderSegment(models.Model):
+class Segment(models.Model):
     WORK_DESCRIPTION = [("Maintenance", "Maintenance"),
                         ("Engine Repair", "Engine Repair"),
                         ("Transmission Repair", "Transmission Repair"),
                         ("Body and Painting", "Body and Painting"),
                         ("Suspension Repair", "Suspension Repair"), ]
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    work_order = models.ForeignKey(WorkOrder, related_name='segment', on_delete=models.CASCADE)
     description_work = models.CharField(max_length=20, choices=WORK_DESCRIPTION)
 
 
-class WorkOrderSparePart(models.Model):
-    work_order_segment = models.ForeignKey(WorkOrderSegment, on_delete=models.CASCADE)
+class SparePart(models.Model):
+    work_order_segment = models.ForeignKey(Segment, related_name="spare_part", on_delete=models.CASCADE)
     part_number = models.CharField(max_length=20)
     description = models.CharField(max_length=30)
     quantity = models.PositiveIntegerField()
@@ -32,12 +33,12 @@ class WorkOrderSparePart(models.Model):
         return f"{self.part_number} - {self.description} - {self.quantity} - {self.price}"
 
 
-class WorkOrderServiceLabor(models.Model):
+class Labor(models.Model):
     LABOR_CHOICES = [("REP", "Repair"),
                      ("MNT", "Maintenance"),
                      ("BNP", "Body and Paint")
                      ]
-    work_order_segment = models.ForeignKey(WorkOrderSegment, on_delete=models.CASCADE)
+    work_order_segment = models.ForeignKey(Segment, related_name='labor', on_delete=models.CASCADE)
     service_man_number = models.OneToOneField(ServiceMan, on_delete=models.CASCADE)
     date_of_service = models.DateField()
     start_time = models.TimeField()
@@ -56,10 +57,10 @@ class WorkOrderServiceLabor(models.Model):
         return f"{self.service_man_number} - {self.duration()}"
 
 
-class WorkOrderMiscellaneous(models.Model):
+class Miscellaneous(models.Model):
     MISC_CODE_CHOICES = [("CON", "Consumables"),
                          ("KLM", "Kilometers")]
-    work_order_segment = models.ForeignKey(WorkOrderSegment, on_delete=models.CASCADE)
+    work_order_segment = models.ForeignKey(Segment, related_name="misc", on_delete=models.CASCADE)
     miss_code = models.CharField(max_length=30, choices=MISC_CODE_CHOICES)
     description = models.CharField(max_length=30)
     price = models.DecimalField(max_digits=10, decimal_places=2)

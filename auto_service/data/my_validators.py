@@ -2,10 +2,10 @@ from django.core.exceptions import ValidationError
 
 
 def vat_number_validator(value):
-    if len(str(value)) > 10:
-        raise ValidationError('VAT number is too long')
-    elif len(str(value)) < 10:
-        raise ValidationError('VAT number is too short')
+    # if len(str(value)) > 9:
+    #     raise ValidationError('VAT number is too long')
+    # elif len(str(value)) < 9 :
+    #     raise ValidationError('VAT number is too short')
     return value
 
 
@@ -26,7 +26,7 @@ def rating_validator(value):
 
 
 def phone_number_validator(value):
-    if len(str(value)) < 10:
+    if len(str(value)) < 9:
         raise ValidationError('Phone number is too short')
     return value
 
