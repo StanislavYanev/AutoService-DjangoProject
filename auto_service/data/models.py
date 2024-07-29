@@ -123,7 +123,7 @@ class SparePart(models.Model):
             self.currency = "BGN"
         return f"{value * 1.3}:2.f"
 
-    part_code = models.CharField(max_length=5, blank=True)
+    part_code = models.CharField(max_length=5, blank=True,null=True)
 
     def __str__(self):
         return f"{self.part_number} {self.description}"

@@ -11,6 +11,9 @@ class WorkOrder(models.Model):
     payment = models.CharField(max_length=30, blank=True, choices=[('Credit', "Credit"), ("Cash", "Cash")])
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.pk} - {self.customer} - {self.car}"
+
 
 class Segment(models.Model):
     WORK_DESCRIPTION = [("Maintenance", "Maintenance"),
@@ -20,6 +23,9 @@ class Segment(models.Model):
                         ("Suspension Repair", "Suspension Repair"), ]
     work_order = models.ForeignKey(WorkOrder, related_name='segment', on_delete=models.CASCADE)
     description_work = models.CharField(max_length=20, choices=WORK_DESCRIPTION)
+
+    def __str__(self):
+        return f"Segment{WorkOrder.objects.filter(pk=self.pk).count() + 1} --> {self.description_work}"
 
 
 class SparePart(models.Model):
@@ -64,3 +70,6 @@ class Miscellaneous(models.Model):
     miss_code = models.CharField(max_length=30, choices=MISC_CODE_CHOICES)
     description = models.CharField(max_length=30)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.miss_code} - {self.description} - {self.price}"
