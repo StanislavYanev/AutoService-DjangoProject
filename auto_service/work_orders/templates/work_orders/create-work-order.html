@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Work Order</title>
+</head>
+<body>
+    <h1>Create Work Order</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'work_orders:work_order_list' %}">Back to Work Orders</a>
+</body>
+</html>
