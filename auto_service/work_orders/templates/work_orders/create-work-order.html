@@ -4,12 +4,13 @@
     <title>Create Work Order</title>
 </head>
 <body>
-    <h1>Create Work Order</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
-    <a href="{% url 'work_orders:work_order_list' %}">Back to Work Orders</a>
+<h1>Create Work Order</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p><a href="{% url 'work_orders:work-order_createseg' %}">Create Segment</a></p>
+    <button type="submit">Next</button>
+</form>
+<a href="{% url 'work_orders:work_order_list' %}">Back to Work Orders</a>
 </body>
 </html>
