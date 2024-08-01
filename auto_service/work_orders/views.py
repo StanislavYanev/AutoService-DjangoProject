@@ -30,6 +30,7 @@ class SegmentCreateView(CreateView):
 
     def form_valid(self, form):
         work_order = WorkOrder.objects.get(pk=self.kwargs['pk'])
+        print(work_order)
         form.instance.work_order = work_order
         return super().form_valid(form)
 
