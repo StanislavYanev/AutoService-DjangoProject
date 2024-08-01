@@ -10,7 +10,7 @@
         <p> {{ model }}</p>
         {% csrf_token %}
         {{ form.as_p }}
-        <p><a href="{% url 'work_orders:work-order_createseg'%}">Create New Segment</a></p>
+        <p><a href="{% url 'work_orders:add_segment'%}">Create New Segment</a></p>
         <button type="submit">Add Segment</button>
         <p><a href="">Add Labor</a></p>
         <p><a href="">Add Spare Parts</a></p>
