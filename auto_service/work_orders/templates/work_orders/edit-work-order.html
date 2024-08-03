@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit WO </title>
+</head>
+<body>
+<ul>
+    <li><a href="{% url 'work_orders:work_order_list' %}">Work Orders List</a></li>
+</ul>
+<form method="get">
+    {{ form.as_p }}
+    <button type="submit">Search</button>
+</form>
+<h2>Results</h2>
+<ul>
+    {% for work_order in work_orders %}
+        <li>
+            <p>WO No {{ work_order.id }} </p>
+            <p>Car {{ work_order.car }}</p>
+            <p>Customer {{ work_order.customer }}</p>
+            <p>Payment {{ work_order.payment }}</p>
+            <p>Stat date {{ work_order.created_at }}</p>
+        </li>
+
+    {% empty %}
+        <li>No work order found</li>
+    {% endfor %}
+</ul>
+</body>
+</html>

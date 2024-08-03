@@ -30,3 +30,7 @@ class LaborForm(forms.ModelForm):
     class Meta:
         model = Labor
         fields = "__all__"
+
+
+class WorkOrderSearchForm(forms.Form):
+    query = forms.CharField(label='Search Work Orders', max_length=255, required=False)
