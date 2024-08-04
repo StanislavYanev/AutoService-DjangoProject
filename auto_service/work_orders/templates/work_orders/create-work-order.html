@@ -4,14 +4,15 @@
     <title>Create WorkOrder and Segment</title>
 </head>
 <body>
-    <h2>Create WorkOrder and Segment</h2>
-    <form method="post">
-        {% csrf_token %}
-        <h3>WorkOrder</h3>
-        {{ work_order_form.as_p }}
-        <h3>Segment</h3>
-        {{ segment_form.as_p }}
-        <button type="submit">Save</button>
-    </form>
+<h2>Create WorkOrder and Segment</h2>
+<a href="{% url 'home' %}">Back</a>
+<form method="post">
+    {% csrf_token %}
+    <h3>WorkOrder</h3>
+    {{ work_order_form.as_p }}
+    <h3>Segment</h3>
+    {{ segment_form.as_p }}
+    <button type="submit">Save</button>
+</form>
 </body>
 </html>

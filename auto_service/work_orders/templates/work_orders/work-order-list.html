@@ -2,17 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>List with Active Work Orders</title>
 </head>
 <body>
 
-    <h1>Work Orders List</h1>
-    {%   for work_order in work_orders  %}
+<h1>Work Orders List</h1>
+<a href="{% url 'home' %}">Back</a>
+{% for work_order in work_orders %}
+    {% if work_order.is_active %}
         <li>
-            <p>Work Order NO {{ work_order.pk }}</p>
-            <p>Work Order start date {{ work_order.created_at }}</p>
-            <p>Work Order NO {{ work_order.customer.vat }}</p>
+            <p>WO No: {{ work_order.pk }}</p>
+            <p>Car: {{ work_order.car }}</p>
+            <p>Customer: {{ work_order.customer }}</p>
+            <p>Customer VAT: {{ work_order.customer.vat }}</p>
+            <p>Work Order start date: {{ work_order.created_at|date:"d-m-Y" }}</p>
+            <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Details</a>
+            <a href="{% url 'work_orders:workorder_delete' work_order.pk %}">Delete</a>
         </li>
-    {%endfor %}
+    {% endif %}
+{% endfor %}
 </body>
 </html>

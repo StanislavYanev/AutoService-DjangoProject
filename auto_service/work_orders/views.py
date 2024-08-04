@@ -1,10 +1,13 @@
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView, DeleteView
 from django.urls import reverse_lazy
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from work_orders.forms import WorkOrderForm, SegmentForm, LaborForm, SparePartForm, MiscellaneousForm, WorkOrderSearchForm
+from work_orders.forms import WorkOrderForm, SegmentForm, LaborForm, SparePartForm, MiscellaneousForm, \
+    WorkOrderSearchForm
 from work_orders.models import WorkOrder, Segment, Labor, SparePart, Miscellaneous
 from django.db.models import Q
+from django.contrib import messages
+
 
 class WorkOrderListView(ListView):
     model = WorkOrder
@@ -37,17 +40,28 @@ class CombinedCreateWorkOrderView(View):
         return render(request, self.template_name, {'work_order_form': work_order_form, 'segment_form': segment_form})
 
 
-class SegmentCreateWorkOrderView(CreateView):
-    model = Segment
-    form_class = SegmentForm
-    template_name = 'work_orders/create-work-order.html'
+def add_segment_to_work_order(request, pk):
+    work_order = get_object_or_404(WorkOrder, pk=pk)
+    if request.method == 'POST':
+        form = SegmentForm(request.POST)
+        if form.is_valid():
+            segment = form.save(commit=False)
+            segment.work_order = work_order
+            segment.save()
+            return redirect('work_orders:workorder_detail', pk=work_order.pk)
+    else:
+        form = SegmentForm()
+    return render(request, "work_orders/create-segment.html", {'form': form, 'work_order': work_order})
 
-    def form_valid(self, form):
-        form.instance.work_order_id = self.kwargs['work_order_id']
-        return super().form_valid(form)
 
-    def get_success_url(self):
-        return reverse_lazy('home', kwargs={'work_order_id': self.kwargs['work_order_id']})
+def delete_segment_from_work_order(request, pk):
+    segment = get_object_or_404(Segment, pk=pk)
+    work_order = segment.work_order
+    print(work_order)
+    if request.method == 'POST':
+        segment.delete()
+        return redirect('work_orders:workorder_detail', pk=work_order.pk)
+    return render(request, "work_orders/work-order-segment-delete.html", {"segment": segment, "work_order": work_order})
 
 
 class WorkOrderSearchView(ListView):
@@ -68,15 +82,26 @@ class WorkOrderSearchView(ListView):
         return context
 
 
+class WorkOrderDetailView(DetailView):
+    model = WorkOrder
+    template_name = 'work_orders/work-order-details.html'
+    context_object_name = 'work_order'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['segments'] = Segment.objects.filter(work_order=self.object)
+        return context
 
 
+class WorkOrderDeleteView(DeleteView):
+    model = WorkOrder
+    template_name = 'work_orders/work-order-delete.html'
+    success_url = reverse_lazy('work_orders:work_order_list')
 
-
-
-
-
-
-
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return super().delete(request, *args, **kwargs)
 
 # class LaborCreateView(CreateView):
 #     model = Labor

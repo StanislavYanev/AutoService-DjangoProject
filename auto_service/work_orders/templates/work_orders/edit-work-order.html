@@ -6,7 +6,8 @@
 </head>
 <body>
 <ul>
-    <li><a href="{% url 'work_orders:work_order_list' %}">Work Orders List</a></li>
+
+    <li><a href="{% url 'home' %}">Back</a></li>
 </ul>
 <form method="get">
     {{ form.as_p }}
@@ -20,7 +21,19 @@
             <p>Car {{ work_order.car }}</p>
             <p>Customer {{ work_order.customer }}</p>
             <p>Payment {{ work_order.payment }}</p>
-            <p>Stat date {{ work_order.created_at }}</p>
+            <p>Stat date {{ work_order.created_at|date:"d-m-Y" }}</p>
+            {% if work_order.is_active %}
+                <p>Status: Open</p>
+            {% else %}
+                <p>Status: Close</p>
+            {% endif %}
+            {% if work_order.invoiced %}
+            <p>Invoice Status: Invoiced</p>
+            {% else %}
+            <p>Invoice Status: Waiting</p>
+            {% endif %}
+            <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Details</a>
+            <a href="{% url 'work_orders:workorder_delete' work_order.pk %}">Delete</a>
         </li>
 
     {% empty %}

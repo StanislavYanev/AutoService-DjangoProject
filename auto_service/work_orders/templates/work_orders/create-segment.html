@@ -8,13 +8,12 @@
 <div>
     <form method="post">
         <p> {{ model }}</p>
+        <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
+        <h3>Add segment to {{ work_order }}</h3>
         {% csrf_token %}
         {{ form.as_p }}
-        <p><a href="{% url 'work_orders:add_segment'%}">Create New Segment</a></p>
         <button type="submit">Add Segment</button>
-        <p><a href="">Add Labor</a></p>
-        <p><a href="">Add Spare Parts</a></p>
-        <p><a href="">Add Miscellaneous</a></p>
+
 
     </form>
 </div>

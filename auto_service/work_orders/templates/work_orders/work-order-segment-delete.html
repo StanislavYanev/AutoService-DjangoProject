@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>Confirm Delete</h2>
+    <p>Are you sure you want to delete "{{ segment }} from {{ work_order }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm</button>
+    </form>
+    <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Cancel</a>
+</body>
+</html>

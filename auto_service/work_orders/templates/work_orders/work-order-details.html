@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Segments from {{ work_order }}</title>
+</head>
+<body>
+<a href="{% url 'work_orders:work_orders_search' %}">Back</a>
+<h2>WO {{ work_order }}</h2>
+<a href="{% url 'work_orders:segment_create_workorder' work_order.pk %}">Add New Segment</a>
+<ul>
+    {% for segment in segments %}
+        <ul>
+            <li>
+                <p>{{ segment }}</p>
+                <a href="">Edit </a>
+                <a href="{% url 'work_orders:segment_delete_workorder' segment.pk %}">Delete </a>
+            </li>
+        </ul>
+    {% endfor %}
+</ul>
+</body>
+</html>

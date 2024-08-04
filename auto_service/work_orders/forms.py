@@ -5,7 +5,7 @@ from work_orders.models import WorkOrder, Segment, Labor, SparePart, Miscellaneo
 class WorkOrderForm(forms.ModelForm):
     class Meta:
         model = WorkOrder
-        fields = '__all__'
+        fields = ["customer", "car", "payment"]
 
 
 class SegmentForm(forms.ModelForm):
@@ -33,4 +33,4 @@ class LaborForm(forms.ModelForm):
 
 
 class WorkOrderSearchForm(forms.Form):
-    query = forms.CharField(label='Search Work Orders', max_length=255, required=False)
+    query = forms.CharField(label='Search Work Orders by number', max_length=255, required=False)

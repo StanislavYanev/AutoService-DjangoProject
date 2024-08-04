@@ -1,9 +1,14 @@
 import uuid
 from datetime import datetime, timedelta
-
+from django.utils import timezone
 from django.db import models
 
 from data.models import Customer, Car, ServiceMan
+
+
+class ActiveManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=False)
 
 
 class WorkOrder(models.Model):
@@ -11,6 +16,25 @@ class WorkOrder(models.Model):
     car = models.OneToOneField(Car, on_delete=models.CASCADE)
     payment = models.CharField(max_length=30, blank=True, choices=[('Credit', "Credit"), ("Cash", "Cash")])
     created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    invoiced = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(blank=True, null=True)
+
+    objects = ActiveManager()
+    all_objects = models.Manager()
+
+    def delete(self, *args, **kwargs):
+        if self.invoiced is False:
+            self.is_deleted = True
+            self.is_active = False
+            self.deleted_at = datetime.now()
+            self.save()
+
+    def restore(self):
+        self.is_deleted = False
+        self.deleted_at = None
+        self.save()
 
     def __str__(self):
         return f"{self.pk} - {self.customer} - {self.car}"
@@ -26,7 +50,7 @@ class Segment(models.Model):
     description_work = models.CharField(max_length=20, choices=WORK_DESCRIPTION)
 
     def __str__(self):
-        return f"Segment{WorkOrder.objects.filter(pk=self.pk).count() + 1} --> {self.description_work}"
+        return f"Segment  --> {self.description_work}"
 
 
 class SparePart(models.Model):
