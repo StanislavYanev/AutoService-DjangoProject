@@ -1,8 +1,5 @@
-import uuid
 from datetime import datetime, timedelta
-from django.utils import timezone
 from django.db import models
-
 from data.models import Customer, Car, ServiceMan
 
 
@@ -13,7 +10,7 @@ class ActiveManager(models.Manager):
 
 class WorkOrder(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    car = models.OneToOneField(Car, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
     payment = models.CharField(max_length=30, blank=True, choices=[('Credit', "Credit"), ("Cash", "Cash")])
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
@@ -50,7 +47,7 @@ class Segment(models.Model):
     description_work = models.CharField(max_length=20, choices=WORK_DESCRIPTION)
 
     def __str__(self):
-        return f"Segment  --> {self.description_work}"
+        return f"Segment  --> {self.description_work} WO --> {self.work_order}"
 
 
 class SparePart(models.Model):
@@ -70,7 +67,7 @@ class Labor(models.Model):
                      ("BNP", "Body and Paint")
                      ]
     work_order_segment = models.ForeignKey(Segment, related_name='labor', on_delete=models.CASCADE)
-    service_man_number = models.OneToOneField(ServiceMan, on_delete=models.CASCADE)
+    service_man_number = models.ManyToManyField(ServiceMan)
     date_of_service = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -82,10 +79,12 @@ class Labor(models.Model):
         if end_datetime < start_datetime:
             end_datetime += timedelta(days=1)
         duration = end_datetime - start_datetime
+        print(duration)
         return duration
 
     def __str__(self):
-        return f"{self.service_man_number} - {self.duration()}"
+
+        return f" - {self.duration()}"
 
 
 class Miscellaneous(models.Model):

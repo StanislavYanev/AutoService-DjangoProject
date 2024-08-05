@@ -57,7 +57,6 @@ def add_segment_to_work_order(request, pk):
 def delete_segment_from_work_order(request, pk):
     segment = get_object_or_404(Segment, pk=pk)
     work_order = segment.work_order
-    print(work_order)
     if request.method == 'POST':
         segment.delete()
         return redirect('work_orders:workorder_detail', pk=work_order.pk)
@@ -103,37 +102,25 @@ class WorkOrderDeleteView(DeleteView):
         self.object.delete()
         return super().delete(request, *args, **kwargs)
 
-# class LaborCreateView(CreateView):
-#     model = Labor
-#     form_class = LaborForm
-#     template_name = ""  # to do template for this
-#     success_url = reverse_lazy('home')
-#
-#     def form_valid(self, form):
-#         segment = Segment.objects.get(pk=self.kwargs['pk'])
-#         form.instance.segment = segment
-#         return super().form_valid(form)
-#
-#
-# class SparePartsCreateView(CreateView):
-#     model = SparePart
-#     form_class = SparePartForm
-#     template_name = ""  # to do template for this
-#     success_url = reverse_lazy('home')
-#
-#     def form_valid(self, form):
-#         segment = Segment.objects.get(pk=self.kwargs['pk'])
-#         form.instance.segment = segment
-#         return super().form_valid(form)
-#
-#
-# class MicsCreateView(CreateView):
-#     model = Miscellaneous
-#     form_class = MiscellaneousForm
-#     template_name = ""
-#     success_url = reverse_lazy('home')
-#
-#     def form_valid(self, form):
-#         segment = Segment.objects.get(pk=self.kwargs['pk'])
-#         form.instance.segment = segment
-#         return super().form_valid(form)
+
+def labor_segment_list(request, pk):
+    segment = get_object_or_404(Segment, pk=pk)
+    work_order = segment.work_order
+    labors = Labor.objects.filter(work_order_segment=segment)
+    return render(request, 'work_orders/labor-menu.html',
+                  {'work_order': work_order, 'segment': segment, 'labors': labors})
+
+
+def add_labor_to_segment(request, pk):
+    segment = get_object_or_404(Segment, pk=pk)
+    work_order = segment.work_order
+    if request.method == 'POST':
+        form = LaborForm(request.POST)
+        if form.is_valid():
+            labor = form.save(commit=False)
+            labor.segment = segment
+            labor.save()
+            return redirect('work_orders:labor_menu', pk=segment.pk)
+    else:
+        form = LaborForm()
+    return render(request, 'work_orders/add-labor-to-seg.html', {'form': form, 'segment': segment, 'work_order': work_order})

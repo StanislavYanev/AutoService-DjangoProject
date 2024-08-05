@@ -13,7 +13,9 @@
         <ul>
             <li>
                 <p>{{ segment }}</p>
-                <a href="">Edit </a>
+                <a href="{% url 'work_orders:labor_menu' segment.pk %}">Labor Menu | </a>
+                <a href="">Spare parts Menu | </a>
+                <a href="">Mics Menu </a>
                 <a href="{% url 'work_orders:segment_delete_workorder' segment.pk %}">Delete </a>
             </li>
         </ul>
