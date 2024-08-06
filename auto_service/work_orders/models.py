@@ -67,7 +67,7 @@ class Labor(models.Model):
                      ("BNP", "Body and Paint")
                      ]
     work_order_segment = models.ForeignKey(Segment, related_name='labor', on_delete=models.CASCADE)
-    service_man_number = models.ManyToManyField(ServiceMan)
+    service_man_number = models.ForeignKey(ServiceMan, related_name="service_man", on_delete=models.CASCADE)
     date_of_service = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -83,8 +83,7 @@ class Labor(models.Model):
         return duration
 
     def __str__(self):
-
-        return f" - {self.duration()}"
+        return f"{self.duration()}"
 
 
 class Miscellaneous(models.Model):

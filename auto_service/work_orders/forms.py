@@ -29,8 +29,8 @@ class MiscellaneousForm(forms.ModelForm):
 class LaborForm(forms.ModelForm):
     class Meta:
         model = Labor
-        fields = "__all__"
-        #fields = ['service_man_number', 'date_of_service', 'start_time', 'end_time', 'labor_type']
+      # fields = "__all__"
+        fields = ['service_man_number', 'date_of_service', 'start_time', 'end_time', 'labor_type']
 
 
 class WorkOrderSearchForm(forms.Form):

@@ -120,7 +120,9 @@ def add_labor_to_segment(request, pk):
             labor = form.save(commit=False)
             labor.segment = segment
             labor.save()
-            return redirect('work_orders:labor_menu', pk=segment.pk)
+            print("YES")
+            #return redirect('work_orders:labor_menu', pk=work_order.segment.pk)
+            return redirect('home')
     else:
         form = LaborForm()
     return render(request, 'work_orders/add-labor-to-seg.html', {'form': form, 'segment': segment, 'work_order': work_order})
