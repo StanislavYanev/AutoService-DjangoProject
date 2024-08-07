@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from django.db import models
 from data.models import Customer, Car, ServiceMan
-
+from .models_validators import *
 
 class ActiveManager(models.Manager):
     def get_queryset(self):
@@ -69,8 +69,8 @@ class Labor(models.Model):
     work_order_segment = models.ForeignKey(Segment, related_name='labor', on_delete=models.CASCADE)
     service_man_number = models.ForeignKey(ServiceMan, related_name="service_man", on_delete=models.CASCADE)
     date_of_service = models.DateField()
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.TimeField(validators=[start_work_validator])
+    end_time = models.TimeField(validators=[end_work_validator])
     labor_type = models.CharField(max_length=20, choices=LABOR_CHOICES)
 
     def duration(self):

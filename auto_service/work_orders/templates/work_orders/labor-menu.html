@@ -8,29 +8,13 @@
 <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
 <h2>{{ work_order }}</h2>
 {{ segment.name }} - <a href="{% url 'work_orders:add_labor_to_segment' segment.id %}">Add Labor</a>
-<h3>Segments</h3>
-<ul>
-    {% for segment in work_order.segment.all %}
+<h3>Segments -- {{ segment.description_work }}</h3>
+
     <ul>
-        {% for labor in segment.labor.all %}
-            {% if labor.work_order_segment.pk == work_order.pk %}
-        <li>{{ labor }} (hours) {{ labor.service_man_number }}</li>
-            {% endif %}
+        {% for labor in labors %}
+            <li>From: {{ labor.start_time }} To: {{ labor.end_time }} -- {{ labor.service_man_number }} -- {{ segment.description_work }} {{ labor }} (hours)</li>
         {% endfor %}
     </ul>
-    {% endfor %}
-</ul>
 
-
-{#<h2>WO {{ work_order }}</h2>#}
-{#<ul>#}
-{#    <li><a href="{%  url 'work_orders:add_labor_to_segment' segment.pk %}">Add Labor</a></li>#}
-{##}
-{#</ul>#}
-{#{% for labor in labors %}#}
-{#    << {{ labor }} >>#}
-{#    <li><a href="">Edit Labor</a></li>#}
-{#    <li><a href="">Delete Labor</a></li>#}
-{#{% endfor %}#}
 </body>
 </html>

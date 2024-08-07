@@ -106,7 +106,7 @@ class WorkOrderDeleteView(DeleteView):
 def labor_segment_list(request, pk):
     segment = get_object_or_404(Segment, pk=pk)
     work_order = segment.work_order
-    labors = Labor.objects.filter(work_order_segment=segment)
+    labors = Labor.objects.filter(work_order_segment=segment.pk)
     return render(request, 'work_orders/labor-menu.html',
                   {'work_order': work_order, 'segment': segment, 'labors': labors})
 
@@ -118,11 +118,11 @@ def add_labor_to_segment(request, pk):
         form = LaborForm(request.POST)
         if form.is_valid():
             labor = form.save(commit=False)
-            labor.segment = segment
+            labor.work_order_segment = segment
             labor.save()
             print("YES")
-            #return redirect('work_orders:labor_menu', pk=work_order.segment.pk)
-            return redirect('home')
+            return redirect('work_orders:labor_menu', pk=segment.work_order.pk)
+            # return redirect('home')
     else:
         form = LaborForm()
     return render(request, 'work_orders/add-labor-to-seg.html', {'form': form, 'segment': segment, 'work_order': work_order})
