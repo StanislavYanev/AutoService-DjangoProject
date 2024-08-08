@@ -13,4 +13,6 @@ urlpatterns = [path('work_order_list/', WorkOrderListView.as_view(), name="work_
                path('workorder/delete-segment/<int:pk>/', delete_segment_from_work_order,
                     name="segment_delete_workorder"),
                path('workorder/labor-menu/<int:pk>/', labor_segment_list, name="labor_menu"),
-               path('workorder/add-labor-to-seg/<int:pk>', add_labor_to_segment, name="add_labor_to_segment"),]
+               path('workorder/add-labor-to-seg/<int:pk>', add_labor_to_segment, name="add_labor_to_segment"),
+               path('workorder/edit-labor/<int:pk>', edit_labor_in_segment_view, name="edit_labor_in_segment"),
+               path('workorder/delete-labor/<int:pk>',delete_labor_in_segment_view, name="delete_labor_in_segment"),]

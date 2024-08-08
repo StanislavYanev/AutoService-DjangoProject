@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Labor</title>
+</head>
+<body>
+<a href="{% url 'work_orders:labor_menu' segment.pk %}">Back</a>
+<form method="post">
+    {% csrf_token %}
+    <p>Service man number >>> {{ labor.service_man_number }} <<< {{ form.service_man_number }}</p>
+    <p>Date of service >>> {{ labor.date_of_service }} <<< {{ form.date_of_service }}</p>
+    <p>Start at >>> {{ labor.start_time|date:"H:i" }} <<< {{ form.start_time }}</p>
+    <p>End at >>> {{ labor.end_time|date:"H:i" }} <<< {{ form.end_time }}</p>
+    <p>Labor type >>> {{ labor.labor_type }} <<< {{ form.labor_type }}</p>
+    <p>Duration >>> {{ labor.duration }} <<<</p>
+    <button type="submit">Edit</button>
+    {% if form.errors %}
+        <ul>
+            {% for field, errors in form.errors.items %}
+                <li>{{ field }}: {{ errors|striptags }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</form>
+</body>
+</html>
+

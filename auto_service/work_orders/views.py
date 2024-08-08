@@ -6,7 +6,7 @@ from work_orders.forms import WorkOrderForm, SegmentForm, LaborForm, SparePartFo
     WorkOrderSearchForm
 from work_orders.models import WorkOrder, Segment, Labor, SparePart, Miscellaneous
 from django.db.models import Q
-from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 
 class WorkOrderListView(ListView):
@@ -120,9 +120,35 @@ def add_labor_to_segment(request, pk):
             labor = form.save(commit=False)
             labor.work_order_segment = segment
             labor.save()
-            print("YES")
             return redirect('work_orders:labor_menu', pk=segment.work_order.pk)
             # return redirect('home')
     else:
         form = LaborForm()
-    return render(request, 'work_orders/add-labor-to-seg.html', {'form': form, 'segment': segment, 'work_order': work_order})
+    return render(request, 'work_orders/add-labor-to-seg.html',
+                  {'form': form, 'segment': segment, 'work_order': work_order})
+
+
+def edit_labor_in_segment_view(request, pk):
+    labor = get_object_or_404(Labor, pk=pk)
+    segment = labor.work_order_segment
+    work_order = segment.work_order
+    if request.method == 'POST':
+        form = LaborForm(request.POST, instance=labor)
+        if form.is_valid():
+            print("Form is valid")
+            form.save()
+            return redirect('work_orders:labor_menu', pk=work_order.pk)
+        else:
+            print("Form is invalid", form.errors)
+    else:
+        form = LaborForm(instance=labor)
+    return render(request, "work_orders/edit-labor.html", {'form': form, 'labor': labor, "segment": segment})
+
+@require_POST
+def delete_labor_in_segment_view(request, pk):
+    labor = get_object_or_404(Labor, pk=pk)
+    segment = labor.work_order_segment
+    work_order = segment.work_order
+    labor.delete()
+    return redirect('work_orders:workorder_detail', pk=work_order.pk)
+    #return render(request, "work_orders/delete-labor.html", {"labor": labor})

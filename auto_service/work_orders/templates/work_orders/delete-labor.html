@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete labor</title>
+</head>
+<body>
+<h1>Confirm Delete</h1>
+<p>Are you sure you want to delete  labor from: {{ labor.start_time|date:"H:i" }} To: {{ labor.end_time|date:"H:i" }} -- {{ labor.service_man_number }} -- {{ segment.description_work }} {{ labor }} (hours)?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirm</button>
+    <a href="{% url 'work_orders:labor_menu' labor.work_order_segment.work_order.pk %}">Cancel</a>
+</body>
+</html>
