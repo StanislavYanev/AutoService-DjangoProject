@@ -93,6 +93,11 @@ class Miscellaneous(models.Model):
     miss_code = models.CharField(max_length=30, choices=MISC_CODE_CHOICES)
     description = models.CharField(max_length=30)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.IntegerField(default=1)
+
+    def total_price(self):
+        return self.quantity * self.price
+
 
     def __str__(self):
-        return f"{self.miss_code} - {self.description} - {self.price}"
+        return f"{self.miss_code} - {self.description} - {self.quantity} - {self.price} = {self.total_price()} BGN"

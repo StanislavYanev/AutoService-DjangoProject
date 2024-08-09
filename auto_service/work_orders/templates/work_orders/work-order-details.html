@@ -15,8 +15,8 @@
                 <p>{{ segment }}</p>
                 <a href="{% url 'work_orders:labor_menu' segment.pk %}">Labor Menu | </a>
                 <a href="">Spare parts Menu | </a>
-                <a href="">Mics Menu </a>
-                <a href="{% url 'work_orders:segment_delete_workorder' segment.pk %}">Delete </a>
+                <a href="{% url 'work_orders:mics_menu' segment.pk %}">Mics Menu </a>
+                <a href="">Delete </a>
             </li>
         </ul>
     {% endfor %}

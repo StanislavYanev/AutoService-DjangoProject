@@ -23,13 +23,13 @@ class SparePartForm(forms.ModelForm):
 class MiscellaneousForm(forms.ModelForm):
     class Meta:
         model = Miscellaneous
-        fields = "__all__"
+        fields = ['miss_code', 'description', 'price', 'quantity']
 
 
 class LaborForm(forms.ModelForm):
     class Meta:
         model = Labor
-      # fields = "__all__"
+
         fields = ['service_man_number', 'date_of_service', 'start_time', 'end_time', 'labor_type']
 
 

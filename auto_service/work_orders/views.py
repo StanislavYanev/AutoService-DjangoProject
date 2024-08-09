@@ -6,7 +6,6 @@ from work_orders.forms import WorkOrderForm, SegmentForm, LaborForm, SparePartFo
     WorkOrderSearchForm
 from work_orders.models import WorkOrder, Segment, Labor, SparePart, Miscellaneous
 from django.db.models import Q
-from django.views.decorators.http import require_POST
 
 
 class WorkOrderListView(ListView):
@@ -120,7 +119,7 @@ def add_labor_to_segment(request, pk):
             labor = form.save(commit=False)
             labor.work_order_segment = segment
             labor.save()
-            return redirect('work_orders:labor_menu', pk=segment.work_order.pk)
+            return redirect('work_orders:labor_menu', pk=segment.pk)
             # return redirect('home')
     else:
         form = LaborForm()
@@ -144,11 +143,44 @@ def edit_labor_in_segment_view(request, pk):
         form = LaborForm(instance=labor)
     return render(request, "work_orders/edit-labor.html", {'form': form, 'labor': labor, "segment": segment})
 
-@require_POST
+
 def delete_labor_in_segment_view(request, pk):
     labor = get_object_or_404(Labor, pk=pk)
     segment = labor.work_order_segment
-    work_order = segment.work_order
     labor.delete()
-    return redirect('work_orders:workorder_detail', pk=work_order.pk)
-    #return render(request, "work_orders/delete-labor.html", {"labor": labor})
+    return redirect('work_orders:labor_menu', pk=segment.pk)
+
+
+def misc_detail_view(request, pk):
+    segment = get_object_or_404(Segment, pk=pk)
+    work_order = segment.work_order
+    misc = Miscellaneous.objects.filter(work_order_segment=segment.pk)
+    context = {'segment': segment, 'work_order': work_order, 'misc': misc}
+    return render(request, "work_orders/misc-menu.html", context)
+
+
+def misc_add_to_segment_view(request, pk):
+    segment = get_object_or_404(Segment, pk=pk)
+    work_order = segment.work_order
+    if request.method == 'POST':
+        form = MiscellaneousForm(request.POST)
+        if form.is_valid():
+            miscellaneous = form.save(commit=False)
+            miscellaneous.work_order_segment = segment
+            miscellaneous.save()
+            return redirect('work_orders:mics_menu', pk=segment.pk)
+    else:
+        form = MiscellaneousForm()
+    context = {'segment': segment, 'work_order': work_order, "form": form}
+    return render(request, "work_orders/add-mics.html", context)
+
+
+def misc_edit_labor_in_segment_view(request, pk):
+    ...
+
+
+def misc_delete_labor_in_segment_view(request, pk):
+    misc = get_object_or_404(Miscellaneous, pk=pk)
+    segment = misc.work_order_segment
+    misc.delete()
+    return redirect('work_orders:mics_menu', pk=segment.pk)
