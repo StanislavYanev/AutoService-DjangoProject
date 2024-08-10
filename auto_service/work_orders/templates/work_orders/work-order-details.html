@@ -8,6 +8,9 @@
 <a href="{% url 'work_orders:work_orders_search' %}">Back</a>
 <h2>WO {{ work_order }}</h2>
 <a href="{% url 'work_orders:segment_create_workorder' work_order.pk %}">Add New Segment</a>
+<p> Labor : {{ work_order.labor_price }} BGN | Spare Parts : {{ work_order.spare_part_price }} BGN  | Misc : {{ work_order.mics_price }} BGN</p>
+<p>Total : {{ work_order.total_price }} BGN </p>
+
 <ul>
     {% for segment in segments %}
         <ul>
@@ -16,7 +19,8 @@
                 <a href="{% url 'work_orders:labor_menu' segment.pk %}">Labor Menu | </a>
                 <a href="">Spare parts Menu | </a>
                 <a href="{% url 'work_orders:mics_menu' segment.pk %}">Mics Menu </a>
-                <a href="">Delete </a>
+                <a href="{% url 'work_orders:segment_delete' segment.pk %}">Delete </a>
+
             </li>
         </ul>
     {% endfor %}

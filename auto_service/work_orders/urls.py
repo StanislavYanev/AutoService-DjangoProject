@@ -12,10 +12,12 @@ urlpatterns = [path('work_order_list/', WorkOrderListView.as_view(), name="work_
                     name="segment_create_workorder"),
                path('workorder/delete-segment/<int:pk>/', delete_segment_from_work_order,
                     name="segment_delete_workorder"),
+               path('workorders/delete-segment/<int:pk>/', delete_segment_view, name="segment_delete"),
                path('workorder/labor-menu/<int:pk>/', labor_segment_list, name="labor_menu"),
                path('workorder/add-labor-to-seg/<int:pk>', add_labor_to_segment, name="add_labor_to_segment"),
                path('workorder/edit-labor/<int:pk>', edit_labor_in_segment_view, name="edit_labor_in_segment"),
                path('workorder/delete-labor/<int:pk>', delete_labor_in_segment_view, name="delete_labor_in_segment"),
                path("workorder/mics/<int:pk>",misc_detail_view, name="mics_menu"),
                path("workorder/add-misc/<int:pk>",misc_add_to_segment_view, name="add_misc"),
-               path("workorder/delete-misc/<int:pk>", misc_delete_labor_in_segment_view, name="delete_misc"),]
+               path("workorder/delete-misc/<int:pk>", misc_delete_labor_in_segment_view, name="delete_misc"),
+               path("workorder/edit-misc/<int:pk>", misc_edit_labor_in_segment_view, name="edit_misc"),]

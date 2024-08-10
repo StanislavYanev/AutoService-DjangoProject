@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Misc</title>
+</head>
+<body>
+<a href="{% url 'work_orders:misc_menu' segment.pk %}">Back</a>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Edit</button>
+</form>
+</body>
+</html>

@@ -96,10 +96,20 @@ class WorkOrderDeleteView(DeleteView):
     template_name = 'work_orders/work-order-delete.html'
     success_url = reverse_lazy('work_orders:work_order_list')
 
+
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.object.delete()
         return super().delete(request, *args, **kwargs)
+
+
+def delete_segment_view(request, pk):
+    segment = get_object_or_404(Segment, pk=pk)
+    work_order = segment.work_order
+    if request.method == 'POST':
+        segment.delete()
+        return redirect('work_orders:workorder_detail',pk=work_order.pk)
+    return render(request, "work_orders/work-order-segment-delete.html", {"segment": segment, "work_order": work_order})
 
 
 def labor_segment_list(request, pk):
@@ -119,8 +129,8 @@ def add_labor_to_segment(request, pk):
             labor = form.save(commit=False)
             labor.work_order_segment = segment
             labor.save()
+            segment.work_order.update_total()
             return redirect('work_orders:labor_menu', pk=segment.pk)
-            # return redirect('home')
     else:
         form = LaborForm()
     return render(request, 'work_orders/add-labor-to-seg.html',
@@ -134,9 +144,11 @@ def edit_labor_in_segment_view(request, pk):
     if request.method == 'POST':
         form = LaborForm(request.POST, instance=labor)
         if form.is_valid():
-            print("Form is valid")
-            form.save()
-            return redirect('work_orders:labor_menu', pk=work_order.pk)
+            labor = form.save(commit=False)
+            labor.work_order_segment = segment
+            labor.save()
+            segment.work_order.update_total()
+            return redirect('work_orders:labor_menu', pk=segment.pk)
         else:
             print("Form is invalid", form.errors)
     else:
@@ -148,6 +160,7 @@ def delete_labor_in_segment_view(request, pk):
     labor = get_object_or_404(Labor, pk=pk)
     segment = labor.work_order_segment
     labor.delete()
+    segment.work_order.update_total()
     return redirect('work_orders:labor_menu', pk=segment.pk)
 
 
@@ -168,6 +181,7 @@ def misc_add_to_segment_view(request, pk):
             miscellaneous = form.save(commit=False)
             miscellaneous.work_order_segment = segment
             miscellaneous.save()
+            segment.work_order.update_total()
             return redirect('work_orders:mics_menu', pk=segment.pk)
     else:
         form = MiscellaneousForm()
@@ -176,11 +190,25 @@ def misc_add_to_segment_view(request, pk):
 
 
 def misc_edit_labor_in_segment_view(request, pk):
-    ...
+    misc = get_object_or_404(Miscellaneous, pk=pk)
+    segment = misc.work_order_segment
+    work_order = segment.work_order
+    if request.method == 'POST':
+        form = MiscellaneousForm(request.POST, instance=misc)
+        if form.is_valid():
+            misc = form.save(commit=False)
+            misc.work_order_segment = segment
+            misc.save()
+            work_order.update_total()
+            return redirect('work_orders:workorder_detail', pk=work_order.pk )
+    else:
+        form = MiscellaneousForm(instance=misc)
+    return render(request, "work_orders/add-mics.html", {'form': form, 'segment': segment})
 
 
 def misc_delete_labor_in_segment_view(request, pk):
     misc = get_object_or_404(Miscellaneous, pk=pk)
     segment = misc.work_order_segment
     misc.delete()
+    segment.work_order.update_total()
     return redirect('work_orders:mics_menu', pk=segment.pk)

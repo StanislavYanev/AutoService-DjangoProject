@@ -13,7 +13,7 @@
 <ul>
     {% for labor in labors %}
         <li>From: {{ labor.start_time|date:"H:i" }} To: {{ labor.end_time|date:"H:i" }}
-            -- {{ labor.service_man_number }} -- {{ segment.description_work }} {{ labor }} (hours)
+            -- {{ labor.service_man_number }} -- {{ segment.description_work }} {{ labor.duration }} (hours) Price: {{ labor.labor_price }} BGN
         </li>
         <a href="{% url 'work_orders:edit_labor_in_segment' labor.pk %}">Edit</a>
 

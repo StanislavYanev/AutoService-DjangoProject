@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from django.db import models
 from data.models import Customer, Car, ServiceMan
 from .models_validators import *
+from decimal import Decimal
 
 class ActiveManager(models.Manager):
     def get_queryset(self):
@@ -17,9 +18,33 @@ class WorkOrder(models.Model):
     invoiced = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(blank=True, null=True)
+    labor_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
+    spare_part_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
+    mics_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     objects = ActiveManager()
     all_objects = models.Manager()
+
+    def calculate_total(self):
+        total = 0
+        spare_part_price = 0
+        mics_price = 0
+        labor_price = 0
+        for segment in self.segment.all():
+            for misc in segment.misc.all():
+                mics_price += misc.price * misc.quantity
+                total += mics_price
+            for labor in segment.labor.all():
+                labor_price = Decimal(labor.labor_price())
+                total += labor_price
+            # for spare_parts in segment.spare_parts.all():
+            #     total += spare_parts.price
+            return total, labor_price, spare_part_price, mics_price
+
+    def update_total(self):
+        self.total_price, self.labor_price, self.spare_part_price, self.mics_price = self.calculate_total()
+        self.save()
 
     def delete(self, *args, **kwargs):
         if self.invoiced is False:
@@ -79,11 +104,25 @@ class Labor(models.Model):
         if end_datetime < start_datetime:
             end_datetime += timedelta(days=1)
         duration = end_datetime - start_datetime
-        print(duration)
         return duration
 
+    def labor_price(self):
+        price_indicator = {"REP": 100, "MNT": 90, "BNP": 110}
+        price = 0
+        price_time = self.duration()
+        real_time = price_time.total_seconds() / 60
+        hours = real_time // 60
+        minutes = real_time - hours * 60
+        if minutes <= 15:
+            pass
+        else:
+            hours += 1
+        if self.labor_type in price_indicator:
+            price = price_indicator[self.labor_type] * hours
+        return price
+
     def __str__(self):
-        return f"{self.duration()}"
+        return f"{self.duration()} , {self.labor_price()}"
 
 
 class Miscellaneous(models.Model):
@@ -97,7 +136,6 @@ class Miscellaneous(models.Model):
 
     def total_price(self):
         return self.quantity * self.price
-
 
     def __str__(self):
         return f"{self.miss_code} - {self.description} - {self.quantity} - {self.price} = {self.total_price()} BGN"
