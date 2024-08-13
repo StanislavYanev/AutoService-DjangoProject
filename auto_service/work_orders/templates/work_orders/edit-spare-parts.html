@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Labor</title>
+</head>
+<body>
+<a href="{% url 'work_orders:spare_parts_menu' segment.pk %}">Back</a>
+<form method="post">
+    {% csrf_token %}
+        <ul>
+            <li><p>Part Number: {{ spare_part.part_number }} </p></li>
+            <li><p> Description >>> {{ spare_part.description }} <<<  {{ form.description }}</p></li>
+            <li><p> Price >>> {{ spare_part.price }} <<<  {{ form.price }}</p></li>
+
+        </ul>
+
+
+    <button type="submit">Edit</button>
+    {% if form.errors %}
+        <ul>
+            {% for field, errors in form.errors.items %}
+                <li>{{ field }}: {{ errors|striptags }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</form>
+</body>
+</html>
+

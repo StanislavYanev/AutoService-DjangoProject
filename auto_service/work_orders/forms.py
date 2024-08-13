@@ -17,7 +17,11 @@ class SegmentForm(forms.ModelForm):
 class SparePartForm(forms.ModelForm):
     class Meta:
         model = SparePart
-        fields = "__all__"
+        fields = ["description", "price"]
+
+
+class SparePartsSearchForm(forms.Form):
+    query = forms.CharField(label="Search", max_length=100, widget=forms.TextInput(attrs={"placeholder": "Search"}))
 
 
 class MiscellaneousForm(forms.ModelForm):

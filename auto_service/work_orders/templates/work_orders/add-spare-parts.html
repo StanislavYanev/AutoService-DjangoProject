@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="get">
+    Enter your part number :{{ form.as_p }}
+    <button type="submit">Search</button>
+</form>
+{% if query %}
+    <h2>Result for {{ query }}</h2>
+    <ul>
+        {% for item in results %}
+            <li> {{ item.part_number }}</li>
+        {% empty %}
+            <li> No results found</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</body>
+</html>

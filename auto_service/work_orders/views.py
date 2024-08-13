@@ -3,9 +3,10 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from work_orders.forms import WorkOrderForm, SegmentForm, LaborForm, SparePartForm, MiscellaneousForm, \
-    WorkOrderSearchForm
+    WorkOrderSearchForm, SparePartsSearchForm
 from work_orders.models import WorkOrder, Segment, Labor, SparePart, Miscellaneous
 from django.db.models import Q
+from data.models import SparePartWarehouse
 
 
 class WorkOrderListView(ListView):
@@ -96,7 +97,6 @@ class WorkOrderDeleteView(DeleteView):
     template_name = 'work_orders/work-order-delete.html'
     success_url = reverse_lazy('work_orders:work_order_list')
 
-
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.object.delete()
@@ -108,7 +108,7 @@ def delete_segment_view(request, pk):
     work_order = segment.work_order
     if request.method == 'POST':
         segment.delete()
-        return redirect('work_orders:workorder_detail',pk=work_order.pk)
+        return redirect('work_orders:workorder_detail', pk=work_order.pk)
     return render(request, "work_orders/work-order-segment-delete.html", {"segment": segment, "work_order": work_order})
 
 
@@ -200,7 +200,7 @@ def misc_edit_labor_in_segment_view(request, pk):
             misc.work_order_segment = segment
             misc.save()
             work_order.update_total()
-            return redirect('work_orders:workorder_detail', pk=work_order.pk )
+            return redirect('work_orders:workorder_detail', pk=work_order.pk)
     else:
         form = MiscellaneousForm(instance=misc)
     return render(request, "work_orders/add-mics.html", {'form': form, 'segment': segment})
@@ -212,3 +212,54 @@ def misc_delete_labor_in_segment_view(request, pk):
     misc.delete()
     segment.work_order.update_total()
     return redirect('work_orders:mics_menu', pk=segment.pk)
+
+
+def spare_parts_list_view(request, pk):
+    segment = get_object_or_404(Segment, pk=pk)
+    work_order = segment.work_order
+    spare_parts = SparePart.objects.filter(work_order_segment=segment.pk)
+    return render(request, "work_orders/spare-parts-menu.html",
+                  {'spare_parts': spare_parts, "segment": segment, "work_order": work_order})
+
+
+def delete_spare_part_view(request, pk):
+    spare_part = get_object_or_404(SparePart, pk=pk)
+    segment = spare_part.work_order_segment
+    print("TEST")
+    spare_part.delete()
+    segment.work_order.update_total()
+    return redirect('work_orders:spare_parts_menu', pk=segment.pk)
+
+
+def edit_spare_part_view(request, pk):
+    spare_part = get_object_or_404(SparePart, pk=pk)
+    segment = spare_part.work_order_segment
+    work_order = segment.work_order
+    if request.method == 'POST':
+        form = SparePartForm(request.POST, instance=spare_part)
+        if form.is_valid():
+            spare_part = form.save(commit=False)
+            form.work_order_segment = segment
+            form.save()
+            work_order.update_total()
+            return redirect('work_orders:spare_parts_menu', pk=segment.pk)
+    else:
+        form = SparePartForm(instance=spare_part)
+    contex = {"spare_part": spare_part, "segment": segment, "form": form}
+    return render(request, "work_orders/edit-spare-parts.html", contex)
+
+
+def add_spare_part_view(request, pk):
+    segment = get_object_or_404(Segment, pk=pk)
+    query = ''
+    results = []
+    if request.method == 'GET':
+        form = SparePartsSearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            results = SparePartWarehouse.objects.filter(part_number__icontains=query)
+    else:
+        form = SparePartsSearchForm()
+
+    contex = {"query": query, "results": results, "form": form, "segment": segment}
+    return render(request, "work_orders/add-spare-parts.html", contex)

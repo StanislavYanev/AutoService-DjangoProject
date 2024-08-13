@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Miscellaneous Menu</title>
+</head>
+<body>
+<a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
+<h2>{{ work_order }}</h2>
+{{ segment.name }} - <a href="{% url 'work_orders:add_spare_parts' segment.pk %}">Add Spare Parts</a>
+<h3>Segments -- {{ segment.description_work }}</h3>
+
+<ul>
+    {% for part in spare_parts %}
+        <p> Part Number: {{ part.part_number }}</p>
+        <p> Description: {{ part.description }}</p>
+        <p> Quantity: {{ part.quantity }}</p>
+        <p> Price: {{ part.price }}</p>
+        <a href="{% url 'work_orders:edit_spare_parts' part.pk %}">Edit</a>
+        <form method="post" action="{% url 'work_orders:delete_spare_part' part.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this labor?');">Delete
+            </button>
+        </form>
+    {% endfor %}
+</ul>
+</body>
+</html>
