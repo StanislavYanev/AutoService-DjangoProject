@@ -107,7 +107,11 @@ def delete_segment_view(request, pk):
     segment = get_object_or_404(Segment, pk=pk)
     work_order = segment.work_order
     if request.method == 'POST':
+
+
+
         segment.delete()
+        work_order.update_total()
         return redirect('work_orders:workorder_detail', pk=work_order.pk)
     return render(request, "work_orders/work-order-segment-delete.html", {"segment": segment, "work_order": work_order})
 
@@ -200,7 +204,7 @@ def misc_edit_labor_in_segment_view(request, pk):
             misc.work_order_segment = segment
             misc.save()
             work_order.update_total()
-            return redirect('work_orders:workorder_detail', pk=work_order.pk)
+            return redirect('work_orders:mics_menu', pk=segment.pk)
     else:
         form = MiscellaneousForm(instance=misc)
     return render(request, "work_orders/add-mics.html", {'form': form, 'segment': segment})
@@ -225,7 +229,10 @@ def spare_parts_list_view(request, pk):
 def delete_spare_part_view(request, pk):
     spare_part = get_object_or_404(SparePart, pk=pk)
     segment = spare_part.work_order_segment
-    print("TEST")
+    spare_warehouse = SparePartWarehouse.objects.filter(part_number=spare_part.part_number)
+    spare_part_one = spare_warehouse.first()
+    spare_part_one.quantity += spare_part.quantity
+    spare_part_one.save()
     spare_part.delete()
     segment.work_order.update_total()
     return redirect('work_orders:spare_parts_menu', pk=segment.pk)
@@ -249,17 +256,55 @@ def edit_spare_part_view(request, pk):
     return render(request, "work_orders/edit-spare-parts.html", contex)
 
 
+def search_query(query):
+    query = query.replace("-", "")
+    return query
+
 def add_spare_part_view(request, pk):
     segment = get_object_or_404(Segment, pk=pk)
-    query = ''
+    query = ""
     results = []
     if request.method == 'GET':
         form = SparePartsSearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data['query']
+            query = search_query(query)
             results = SparePartWarehouse.objects.filter(part_number__icontains=query)
     else:
         form = SparePartsSearchForm()
 
     contex = {"query": query, "results": results, "form": form, "segment": segment}
     return render(request, "work_orders/add-spare-parts.html", contex)
+
+
+def add_spare_to_work_order_view(request, pk, seg_id):
+    part = get_object_or_404(SparePartWarehouse, pk=pk)
+    segment = get_object_or_404(Segment, pk=seg_id)
+    quantity = int(request.POST['quantity'])
+
+    wo_part, create = SparePart.objects.get_or_create(part_number=part.part_number,
+                                                      defaults={'quantity': quantity, "price": part.customer_price,
+                                                                "work_order_segment": segment,
+                                                                'description': part.description})
+
+    if create:
+        wo_part.quantity = quantity
+        part.quantity -= quantity
+
+    else:
+        if float(part.customer_price) == float(wo_part.price):
+            wo_part.quantity += quantity
+            part.quantity -= quantity
+
+        else:
+            print("TEST")
+            wo_part = SparePart.objects.create(part_number=part.part_number, quantity=0, price=part.customer_price,
+                                               work_order_segment=segment, description=part.description)
+            wo_part.quantity += quantity
+            part.quantity -= quantity
+
+    part.save()
+    wo_part.save()
+    segment.work_order.update_total()
+
+    return redirect('work_orders:spare_parts_menu', pk=segment.pk)

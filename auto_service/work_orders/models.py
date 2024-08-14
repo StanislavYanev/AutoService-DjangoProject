@@ -1,3 +1,4 @@
+from curses.ascii import isalpha
 from datetime import datetime, timedelta
 from django.db import models
 from data.models import Customer, Car, ServiceMan
@@ -38,9 +39,10 @@ class WorkOrder(models.Model):
             for labor in segment.labor.all():
                 labor_price = Decimal(labor.labor_price())
                 total += labor_price
-            # for spare_parts in segment.spare_parts.all():
-            #     total += spare_parts.price
-            return total, labor_price, spare_part_price, mics_price
+            for spare_parts in segment.spare_part.all():
+                spare_part_price += spare_parts.price * spare_parts.quantity
+                total += spare_parts.price
+        return total, labor_price, spare_part_price, mics_price
 
     def update_total(self):
         self.total_price, self.labor_price, self.spare_part_price, self.mics_price = self.calculate_total()
@@ -82,9 +84,12 @@ class SparePart(models.Model):
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
+
     def __str__(self):
         return f"{self.part_number} - {self.description} - {self.quantity} - {self.price}"
 
+    def total_price(self):
+        return self.quantity * self.price
 
 class Labor(models.Model):
     LABOR_CHOICES = [("REP", "Repair"),

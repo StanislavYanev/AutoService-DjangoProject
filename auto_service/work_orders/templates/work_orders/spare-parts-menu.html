@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Miscellaneous Menu</title>
+    <title>Spare Parts Menu</title>
 </head>
 <body>
 <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
@@ -11,11 +11,11 @@
 <h3>Segments -- {{ segment.description_work }}</h3>
 
 <ul>
+
+    <p>______________________________________________________________________________</p>
     {% for part in spare_parts %}
-        <p> Part Number: {{ part.part_number }}</p>
-        <p> Description: {{ part.description }}</p>
-        <p> Quantity: {{ part.quantity }}</p>
-        <p> Price: {{ part.price }}</p>
+        <p> |Part Number: {{ part.part_number}} | Description: {{ part.description }} | Quantity: {{ part.quantity }} |
+            Price: {{ part.price }} BGN | Total: {{ part.total_price }} BGN</p>
         <a href="{% url 'work_orders:edit_spare_parts' part.pk %}">Edit</a>
         <form method="post" action="{% url 'work_orders:delete_spare_part' part.pk %}" style="display:inline;">
             {% csrf_token %}
@@ -23,6 +23,7 @@
             </button>
         </form>
     {% endfor %}
+    <p>______________________________________________________________________________</p>
 </ul>
 </body>
 </html>

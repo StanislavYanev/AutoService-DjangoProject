@@ -5,7 +5,7 @@
     <title>Labor Menu</title>
 </head>
 <body>
-<a href="{% url 'work_orders:labor_menu' work_order.pk %}">Back</a>
+<a href="{% url 'work_orders:labor_menu' segment.pk %}">Back</a>
 <h2>WO {{ work_order }}</h2>
 <form method="post">
     {%  csrf_token %}

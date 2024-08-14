@@ -121,7 +121,7 @@ class SparePartWarehouse(models.Model):
         if self.currency == "EUR":
             value /= 1.95583
             self.currency = "BGN"
-        return f"{value * 1.3}:2.f"
+        return f"{value * 1.3:.2f}"
 
     part_code = models.CharField(max_length=5, blank=True, null=True)
 
