@@ -92,24 +92,51 @@ class WorkOrderDetailView(DetailView):
         return context
 
 
-class WorkOrderDeleteView(DeleteView):
-    model = WorkOrder
-    template_name = 'work_orders/work-order-delete.html'
-    success_url = reverse_lazy('work_orders:work_order_list')
+# class WorkOrderDeleteView(DeleteView):
+#     model = WorkOrder
+#     template_name = 'work_orders/work-order-delete.html'
+#     success_url = reverse_lazy('work_orders:work_order_list')
+#
+#     def delete(self, request, *args, **kwargs):
+#         can_delete = []
+#         print("test")
+#         for i in self.object.segments.all():
+#             if i.calculate_seg_total() == 0:
+#                 can_delete.append(True)
+#                 print("test")
+#             else:
+#                 can_delete.append(False)
+#         if False in can_delete:
+#             return self.success_url
+#         else:
+#             self.object.delete()
+#         print(can_delete)
+#         return super().delete(request, *args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.delete()
-        return super().delete(request, *args, **kwargs)
+
+def delete_work_order_view(request, pk):
+    work_order = get_object_or_404(WorkOrder, pk=pk)
+    can_delete = []
+    if request.method == 'POST':
+        for i in work_order.segment.all():
+            if i.calculate_seg_total() == 0:
+                can_delete.append(True)
+                print("True")
+            else:
+                can_delete.append(False)
+        if False in can_delete:
+            return redirect('home')
+        else:
+            work_order.delete()
+            print(can_delete)
+            return redirect('work_orders:work_orders_search')
+    return render(request, "work_orders/work-order-delete.html", {"work_order": work_order})
 
 
 def delete_segment_view(request, pk):
     segment = get_object_or_404(Segment, pk=pk)
     work_order = segment.work_order
     if request.method == 'POST':
-
-
-
         segment.delete()
         work_order.update_total()
         return redirect('work_orders:workorder_detail', pk=work_order.pk)
@@ -259,6 +286,7 @@ def edit_spare_part_view(request, pk):
 def search_query(query):
     query = query.replace("-", "")
     return query
+
 
 def add_spare_part_view(request, pk):
     segment = get_object_or_404(Segment, pk=pk)

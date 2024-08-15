@@ -41,7 +41,7 @@ class WorkOrder(models.Model):
                 total += labor_price
             for spare_parts in segment.spare_part.all():
                 spare_part_price += spare_parts.price * spare_parts.quantity
-                total += spare_parts.price
+                total += spare_part_price
         return total, labor_price, spare_part_price, mics_price
 
     def update_total(self):
@@ -73,8 +73,25 @@ class Segment(models.Model):
     work_order = models.ForeignKey(WorkOrder, related_name='segment', on_delete=models.CASCADE)
     description_work = models.CharField(max_length=20, choices=WORK_DESCRIPTION)
 
+    def calculate_seg_total(self):
+        total = 0
+        print("test")
+        for misc in self.misc.all():
+            mics_price = misc.price * misc.quantity
+            total += mics_price
+        for labor in self.labor.all():
+            labor_price = Decimal(labor.labor_price())
+            total += labor_price
+        for spare_parts in self.spare_part.all():
+            spare_part_price = spare_parts.price * spare_parts.quantity
+            total += spare_part_price
+        return  total
+
     def __str__(self):
-        return f"Segment  --> {self.description_work} WO --> {self.work_order}"
+        return f"Segment  --> {self.description_work} WO --> {self.work_order} | {self.calculate_seg_total()}"
+
+
+
 
 
 class SparePart(models.Model):
