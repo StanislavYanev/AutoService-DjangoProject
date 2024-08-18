@@ -39,3 +39,9 @@ class LaborForm(forms.ModelForm):
 
 class WorkOrderSearchForm(forms.Form):
     query = forms.CharField(label='Search Work Orders by number', max_length=255, required=False)
+
+
+class WorkOrderNoteForm(forms.ModelForm):
+    class Meta:
+        model = WorkOrder
+        fields = ['description_work']

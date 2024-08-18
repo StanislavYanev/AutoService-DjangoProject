@@ -5,6 +5,7 @@ from data.models import Customer, Car, ServiceMan
 from .models_validators import *
 from decimal import Decimal
 
+
 class ActiveManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_deleted=False)
@@ -19,6 +20,7 @@ class WorkOrder(models.Model):
     invoiced = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(blank=True, null=True)
+    description_work = models.TextField(blank=True, null=True)
     labor_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
     spare_part_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
     mics_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
@@ -65,14 +67,6 @@ class WorkOrder(models.Model):
 
 
 class Segment(models.Model):
-    WORK_DESCRIPTION = [("Maintenance", "Maintenance"),
-                        ("Engine Repair", "Engine Repair"),
-                        ("Transmission Repair", "Transmission Repair"),
-                        ("Body and Painting", "Body and Painting"),
-                        ("Suspension Repair", "Suspension Repair"), ]
-    work_order = models.ForeignKey(WorkOrder, related_name='segment', on_delete=models.CASCADE)
-    description_work = models.CharField(max_length=20, choices=WORK_DESCRIPTION)
-
     def calculate_seg_total(self):
         total = 0
         print("test")
@@ -85,13 +79,19 @@ class Segment(models.Model):
         for spare_parts in self.spare_part.all():
             spare_part_price = spare_parts.price * spare_parts.quantity
             total += spare_part_price
-        return  total
+        return total
+
+    WORK_DESCRIPTION = [("Maintenance", "Maintenance"),
+                        ("Engine Repair", "Engine Repair"),
+                        ("Transmission Repair", "Transmission Repair"),
+                        ("Body and Painting", "Body and Painting"),
+                        ("Suspension Repair", "Suspension Repair"), ]
+    work_order = models.ForeignKey(WorkOrder, related_name='segment', on_delete=models.CASCADE)
+    description_work = models.CharField(max_length=20, choices=WORK_DESCRIPTION)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[calculate_seg_total])
 
     def __str__(self):
         return f"Segment  --> {self.description_work} WO --> {self.work_order} | {self.calculate_seg_total()}"
-
-
-
 
 
 class SparePart(models.Model):
@@ -101,12 +101,12 @@ class SparePart(models.Model):
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
-
     def __str__(self):
         return f"{self.part_number} - {self.description} - {self.quantity} - {self.price}"
 
     def total_price(self):
         return self.quantity * self.price
+
 
 class Labor(models.Model):
     LABOR_CHOICES = [("REP", "Repair"),

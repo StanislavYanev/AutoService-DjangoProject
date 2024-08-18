@@ -25,4 +25,5 @@ urlpatterns = [path('work_order_list/', WorkOrderListView.as_view(), name="work_
                path('workorder/delete_spare-part/<int:pk>',delete_spare_part_view, name="delete_spare_part"),
                path('workorder/edit-spare-part/<int:pk>',edit_spare_part_view, name="edit_spare_parts"),
                path('workorder/add-parts<int:pk>', add_spare_part_view, name="add_spare_parts"),
-               path('workorder/add-part-to-work-order<int:pk>/<int:seg_id>', add_spare_to_work_order_view, name="add_part_to_work_order"),]
+               path('workorder/add-part-to-work-order<int:pk>/<int:seg_id>', add_spare_to_work_order_view, name="add_part_to_work_order"),
+               path('invoice/<int:pk>/', invoice_work_order, name="invoice"),]

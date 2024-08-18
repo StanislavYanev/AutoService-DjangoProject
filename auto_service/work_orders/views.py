@@ -3,10 +3,11 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from work_orders.forms import WorkOrderForm, SegmentForm, LaborForm, SparePartForm, MiscellaneousForm, \
-    WorkOrderSearchForm, SparePartsSearchForm
+    WorkOrderSearchForm, SparePartsSearchForm, WorkOrderNoteForm
 from work_orders.models import WorkOrder, Segment, Labor, SparePart, Miscellaneous
 from django.db.models import Q
 from data.models import SparePartWarehouse
+
 
 
 class WorkOrderListView(ListView):
@@ -336,3 +337,17 @@ def add_spare_to_work_order_view(request, pk, seg_id):
     segment.work_order.update_total()
 
     return redirect('work_orders:spare_parts_menu', pk=segment.pk)
+
+def invoice_work_order(request, pk):
+    work_order = get_object_or_404(WorkOrder, pk=pk)
+    if request.method == 'POST':
+        form =  WorkOrderForm(request.POST, instance=work_order)
+        if form.is_valid():
+            work_order.description_work = form.cleaned_data['description']
+            work_order.save()
+
+    else:
+        form =  WorkOrderNoteForm(instance=work_order)
+
+    context = {"work_order": work_order, "form": form}
+    return render(request,"work_orders/invoice.html", context)

@@ -18,6 +18,7 @@
             <p>Work Order start date: {{ work_order.created_at|date:"d-m-Y" }}</p>
             <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Details</a>
             <a href="{% url 'work_orders:workorder_delete' work_order.pk %}">Delete</a>
+            <a href="">Invoice</a>
         </li>
     {% endif %}
 {% endfor %}
