@@ -12,7 +12,7 @@ class ActiveManager(models.Manager):
 
 
 class WorkOrder(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer,related_name="customer", on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     payment = models.CharField(max_length=30, blank=True, choices=[('Credit', "Credit"), ("Cash", "Cash")])
     created_at = models.DateTimeField(auto_now_add=True)

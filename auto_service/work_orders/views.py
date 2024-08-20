@@ -361,7 +361,6 @@ def invoice_file_view(request, pk):
     work_order.is_active = False
     work_order.invoiced = True
     work_order.save()
-    invoice = Invoice.objects.create(work_order=work_order.pk
-                                    )
+    invoice = Invoice.objects.create(work_order=work_order.pk)
     invoice.save()
     return render(request, "work_orders/invoice-confirm.html", {"work_order": work_order, "invoice": invoice})
