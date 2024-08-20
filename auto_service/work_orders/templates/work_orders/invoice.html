@@ -6,11 +6,20 @@
 </head>
 <body>
 <h1>Work Order No: {{ work_order.pk }}</h1>
-<p>Work Order work description : {{ work_order.description_work }}</p>
-{% csrf_token %}
-<p>Please note that the following information must be displayed on the invoice: {{ form.description_work }}
-
-</p>
+<p>Work Order work description : </p>
+<h3>{{ work_order.description_work }}</h3>
+<form method="post">
+    {% csrf_token %}
+    <p>Please note that the following information will be displayed on the invoice: {{ form.description_work }}</p>
+    <button type="submit">Update Info</button>
+    {% if form.errors %}
+        <ul>
+            {% for field, errors in form.errors.items %}
+                <li>{{ field }}: {{ errors|striptags }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</form>
 <h2>Customer data:</h2>
 <p>Customer : {{ work_order.customer }}</p>
 <p>Payment : {{ work_order.payment }}</p>
@@ -31,7 +40,10 @@
 <p>Labor : {{ work_order.labor_price }} BGN</p>
 <p>Misc : {{ work_order.mics_price }} BGN</p>
 <p>Total price : {{ work_order.total_price }} BGN</p>
-<button type="submit" onclick="return confirm('Are you sure you want invoice this Work Order?');">Invoice</button>
+<button type="button"
+        onclick="if (confirm('Are you sure you want invoice this Work Order?')){window.location.href='{% url 'work_orders:invoice-file' work_order.pk %}'; return false; }">
+    Invoice
+</button>
 <button onclick="window.history.back();">Back</button>
 
 </body>

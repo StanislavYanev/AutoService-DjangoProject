@@ -1,3 +1,5 @@
+from datetime import timezone
+
 from django.views.generic import ListView, CreateView, DetailView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,7 +9,7 @@ from work_orders.forms import WorkOrderForm, SegmentForm, LaborForm, SparePartFo
 from work_orders.models import WorkOrder, Segment, Labor, SparePart, Miscellaneous
 from django.db.models import Q
 from data.models import SparePartWarehouse
-
+from invoice.models import Invoice
 
 
 class WorkOrderListView(ListView):
@@ -338,16 +340,28 @@ def add_spare_to_work_order_view(request, pk, seg_id):
 
     return redirect('work_orders:spare_parts_menu', pk=segment.pk)
 
+
 def invoice_work_order(request, pk):
     work_order = get_object_or_404(WorkOrder, pk=pk)
     if request.method == 'POST':
-        form =  WorkOrderForm(request.POST, instance=work_order)
+        form = WorkOrderNoteForm(request.POST, instance=work_order)
         if form.is_valid():
-            work_order.description_work = form.cleaned_data['description']
+            work_order.description_work = form.cleaned_data['description_work']
             work_order.save()
-
+        else:
+            print(form.errors)
     else:
-        form =  WorkOrderNoteForm(instance=work_order)
-
+        form = WorkOrderNoteForm(instance=work_order)
     context = {"work_order": work_order, "form": form}
-    return render(request,"work_orders/invoice.html", context)
+    return render(request, "work_orders/invoice.html", context)
+
+
+def invoice_file_view(request, pk):
+    work_order = get_object_or_404(WorkOrder, pk=pk)
+    work_order.is_active = False
+    work_order.invoiced = True
+    work_order.save()
+    invoice = Invoice.objects.create(work_order=work_order.pk
+                                    )
+    invoice.save()
+    return render(request, "work_orders/invoice-confirm.html", {"work_order": work_order, "invoice": invoice})
