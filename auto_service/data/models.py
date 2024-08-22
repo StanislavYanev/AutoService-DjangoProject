@@ -31,6 +31,7 @@ class Customer(models.Model):
                                        validators=[credit_limit_validator])
     payment_terms = models.CharField(max_length=30, choices=PAYMENT_TERMS_CHOICES)
     description = models.TextField(blank=True)
+    flb = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return self.name

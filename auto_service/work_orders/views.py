@@ -343,6 +343,7 @@ def add_spare_to_work_order_view(request, pk, seg_id):
 
 def invoice_work_order(request, pk):
     work_order = get_object_or_404(WorkOrder, pk=pk)
+    work_order.update_total()
     if request.method == 'POST':
         form = WorkOrderNoteForm(request.POST, instance=work_order)
         if form.is_valid():
@@ -358,6 +359,7 @@ def invoice_work_order(request, pk):
 
 def invoice_file_view(request, pk):
     work_order = get_object_or_404(WorkOrder, pk=pk)
+    work_order.update_total()
     work_order.is_active = False
     work_order.invoiced = True
     work_order.save()

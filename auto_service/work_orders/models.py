@@ -39,7 +39,7 @@ class WorkOrder(models.Model):
                 mics_price += misc.price * misc.quantity
                 total += mics_price
             for labor in segment.labor.all():
-                labor_price = Decimal(labor.labor_price())
+                labor_price += Decimal(labor.labor_price())
                 total += labor_price
             for spare_parts in segment.spare_part.all():
                 spare_part_price += spare_parts.price * spare_parts.quantity
@@ -69,7 +69,6 @@ class WorkOrder(models.Model):
 class Segment(models.Model):
     def calculate_seg_total(self):
         total = 0
-        print("test")
         for misc in self.misc.all():
             mics_price = misc.price * misc.quantity
             total += mics_price
