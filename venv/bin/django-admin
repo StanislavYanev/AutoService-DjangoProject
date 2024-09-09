@@ -1,4 +1,4 @@
-#!/home/stanislav/Desktop/GitHub/AutoService-DjangoProject/venv/bin/python3
+#!/home/rezos/Desktop/AutoService-DjangoProject/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
