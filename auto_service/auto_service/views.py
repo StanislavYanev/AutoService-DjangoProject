@@ -18,4 +18,4 @@ def login_view(request):
 
 @login_required()
 def home_view(request):
-    return render(request, "base-test.html")
+    return render(request, "home.html")

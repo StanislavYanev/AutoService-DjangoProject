@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Spare Parts Menu</title>
-</head>
-<body>
-<a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
+{% extends "home.html" %}
+{%  block title %}
+    Spare Parts Menu
+{%  endblock %}
+
+{% block content %}
+    <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
 <h2>{{ work_order }}</h2>
 {{ segment.name }} - <a href="{% url 'work_orders:add_spare_parts' segment.pk %}">Add Spare Parts</a>
 <h3>Segments -- {{ segment.description_work }}</h3>
@@ -25,5 +24,6 @@
     {% endfor %}
     <p>______________________________________________________________________________</p>
 </ul>
-</body>
-</html>
+{% endblock %}
+
+

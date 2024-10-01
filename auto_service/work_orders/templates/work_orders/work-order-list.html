@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>List with Active Work Orders</title>
-</head>
-<body>
+{% extends 'home.html' %}
+{% block title %}
+    List with Active Work Orders
+{% endblock %}
+{% block content %}
 
 <h1>Work Orders List</h1>
 <a href="{% url 'home' %}">Back</a>
@@ -22,5 +20,5 @@
         </li>
     {% endif %}
 {% endfor %}
-</body>
-</html>
+
+{% endblock %}

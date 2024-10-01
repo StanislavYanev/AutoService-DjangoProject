@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit WO </title>
-</head>
-<body>
-<ul>
+{% extends "home.html" %}
+{%  block title %}
+    Edit WO
+{%  endblock %}
+
+{% block content %}
+    <ul>
 
     <li><a href="{% url 'home' %}">Back</a></li>
 </ul>
@@ -41,5 +40,4 @@
         <li>No work order found</li>
     {% endfor %}
 </ul>
-</body>
-</html>
+{% endblock %}

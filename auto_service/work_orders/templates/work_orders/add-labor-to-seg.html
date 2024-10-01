@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Labor Menu</title>
-</head>
-<body>
+{% extends "home.html" %}
+{%  block title %}
+    Labor Menu
+{%  endblock %}
+
+{% block content %}
+
+
 <a href="{% url 'work_orders:labor_menu' segment.pk %}">Back</a>
 <h2>WO {{ work_order }}</h2>
 <form method="post">
@@ -12,6 +13,7 @@
     {{ form.as_p }}
     <button type="submit">Confirm</button>
 </form>
+{% endblock %}
 
-</body>
-</html>
+
+

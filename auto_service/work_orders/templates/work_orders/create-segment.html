@@ -1,21 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<div>
-    <form method="post">
-        <p> {{ model }}</p>
-        <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
-        <h3>Add segment to {{ work_order }}</h3>
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Segment</button>
+{% extends "home.html" %}
+{% block title %}
+    Create Segment
+{% endblock %}
+
+{% block content %}
+    <div>
+        <form method="post">
+            <p> {{ model }}</p>
+            <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
+            <h3>Add segment to {{ work_order }}</h3>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add Segment</button>
 
 
-    </form>
-</div>
-</body>
-</html>
+        </form>
+    </div>
+{% endblock %}

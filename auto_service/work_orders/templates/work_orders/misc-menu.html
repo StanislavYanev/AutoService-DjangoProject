@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Miscellaneous Menu</title>
-</head>
-<body>
-<a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
+{% extends "home.html" %}
+{%  block title %}
+    Miscellaneous Menu
+{%  endblock %}
+
+{% block content %}
+    <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Back</a>
 <h2>{{ work_order }}</h2>
 {{ segment.name }} - <a href="{% url 'work_orders:add_misc' segment.pk %}">Add Miscellaneous</a>
 <h3>Segments -- {{ segment.description_work }}</h3>
@@ -33,6 +32,4 @@
             </button>
         </form>
     {% endfor %}
-</ul>
-</body>
-</html>
+{% endblock %}

@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Invoice </title>
-</head>
-<body>
-<p>Work Order No {{ work_order.pk }} was successful invoiced </p>
+{% extends "home.html" %}
+{%  block title %}
+    Invoice
+{%  endblock %}
+
+{% block content %}
+    <p>Work Order No {{ work_order.pk }} was successful invoiced </p>
 <p>Invoice No: {{ invoice.invoice_number }}</p>
 <button  type="button" onclick="window.location.href='{% url 'invoice:create-pdf-invoice' invoice.invoice_number %}'">Download PDF</button>
-</body>
-</html>
+{% endblock %}
+

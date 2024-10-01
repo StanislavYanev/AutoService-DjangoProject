@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Labor</title>
-</head>
-<body>
-<a href="{% url 'work_orders:spare_parts_menu' segment.pk %}">Back</a>
+{% extends "home.html" %}
+{%  block title %}
+    Edit Labor
+{%  endblock %}
+
+{% block content %}
+    <a href="{% url 'work_orders:spare_parts_menu' segment.pk %}">Back</a>
 <form method="post">
     {% csrf_token %}
         <ul>
@@ -25,6 +24,4 @@
         </ul>
     {% endif %}
 </form>
-</body>
-</html>
-
+{% endblock %}

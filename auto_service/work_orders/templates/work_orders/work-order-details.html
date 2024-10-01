@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Segments from {{ work_order }}</title>
-</head>
-<body>
+{% extends 'home.html' %}
+{% block title %}
+    Segments from {{ work_order }}
+{% endblock %}
+{% block content %}
+
 <a href="{% url 'work_orders:work_orders_search' %}">Back</a>
 <h2>WO {{ work_order }}</h2>
 <a href="{% url 'work_orders:segment_create_workorder' work_order.pk %}">Add New Segment</a>
@@ -26,6 +25,4 @@
             </li>
         </ul>
     {% endfor %}
-</ul>
-</body>
-</html>
+{% endblock %}

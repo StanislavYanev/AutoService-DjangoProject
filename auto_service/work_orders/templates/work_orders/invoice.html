@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Invoice</title>
-</head>
-<body>
-<h1>Work Order No: {{ work_order.pk }}</h1>
+{% extends "home.html" %}
+{%  block title %}
+    Invoice
+{%  endblock %}
+
+{% block content %}
+    <h1>Work Order No: {{ work_order.pk }}</h1>
 <p>Work Order work description : </p>
 <h3>{{ work_order.description_work }}</h3>
 <form method="post">
@@ -46,5 +45,4 @@
 </button>
 <button onclick="window.history.back();">Back</button>
 
-</body>
-</html>
+{% endblock %}

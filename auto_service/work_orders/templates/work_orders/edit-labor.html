@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Labor</title>
-</head>
-<body>
-<a href="{% url 'work_orders:labor_menu' segment.pk %}">Back</a>
+{% extends "home.html" %}
+{%  block title %}
+    Edit Labor
+{%  endblock %}
+
+{% block content %}
+    <a href="{% url 'work_orders:labor_menu' segment.pk %}">Back</a>
 <form method="post">
     {% csrf_token %}
     <p>Service man number >>> {{ labor.service_man_number }} <<< {{ form.service_man_number }}</p>
@@ -23,6 +22,6 @@
         </ul>
     {% endif %}
 </form>
-</body>
-</html>
+{% endblock %}
+
 
