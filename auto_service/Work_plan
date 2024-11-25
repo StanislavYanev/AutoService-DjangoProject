@@ -1,0 +1,11 @@
+1. Add functionality for connection between Django and React
+1.1 Create Work Orders menu.  OK
+1.1.1 Search customer OK
+1.1.1.1 search by Cust No: OK
+1.1.1.2 search by Name: OK
+1.1.2 Select Car ( from added items and add new options) - First must create menu "ADD CAR TO CUSTOMER"
+1.1.4 Create Work segment that must be in relation with work order. OK
+
+2. Add PostgreSQL as database
+
+3. Add functionality to Work Order list  menu

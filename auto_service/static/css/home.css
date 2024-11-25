@@ -57,15 +57,30 @@ h2 {
     background-color: #31304D !important;
     color: #F0ECE5 !important;
 }
-.btn-custom-text {
-            color: #F0ECE5 !important;
-        }
 
-.custom-footer{
+.btn-custom-text {
+    color: #F0ECE5 !important;
+}
+
+.custom-footer {
     background-color: #31304D !important;
     color: #F0ECE5 !important;
 }
 
 .text-custom {
     color: #F0ECE5 !important;
+}
+
+.custom-box {
+    background-color: #f8f9fa; /
+    padding: 20px;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
 }

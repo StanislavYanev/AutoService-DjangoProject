@@ -2,23 +2,57 @@
 {% block title %}
     List with Active Work Orders
 {% endblock %}
+
 {% block content %}
+    <div class="flex-container">
+        <h1>Work Orders List</h1>
+    </div>
+    <a href="{% url 'home' %}">Back</a>
+    <a class="btn btn-custom mx-2 btn-custom-text" href="{% url 'home' %}">Home</a>
+    {% for work_order in work_orders %}
+        {% if work_order.is_active %}
+            <div class="container my-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="custom-box">
+                            <ul>
+                                <li>
+                                    <p>WO No: {{ work_order.pk }}</p>
+                                    <p>Car: {{ work_order.car }}</p>
+                                    <p>Customer: {{ work_order.customer }}</p>
+                                    <p>Customer VAT: {{ work_order.customer.vat }}</p>
+                                    <p>Work Order start date: {{ work_order.created_at|date:"d-m-Y" }}</p>
+                                    <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Details</a>
+                                    <a href="{% url 'work_orders:workorder_delete' work_order.pk %}">Delete</a>
+                                    <a href="">Invoice</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
 
-<h1>Work Orders List</h1>
-<a href="{% url 'home' %}">Back</a>
-{% for work_order in work_orders %}
-    {% if work_order.is_active %}
-        <li>
-            <p>WO No: {{ work_order.pk }}</p>
-            <p>Car: {{ work_order.car }}</p>
-            <p>Customer: {{ work_order.customer }}</p>
-            <p>Customer VAT: {{ work_order.customer.vat }}</p>
-            <p>Work Order start date: {{ work_order.created_at|date:"d-m-Y" }}</p>
-            <a href="{% url 'work_orders:workorder_detail' work_order.pk %}">Details</a>
-            <a href="{% url 'work_orders:workorder_delete' work_order.pk %}">Delete</a>
-            <a href="">Invoice</a>
-        </li>
-    {% endif %}
-{% endfor %}
+{% block css %}
+    <style>
+        .custom-box {
+            background-color: #f8f9fa !important;
+            padding: 20px !important;
+            border: 2px solid #007bff !important;
+            border-radius: 10px !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+        }
 
+        .flex-container {
+            display: flex !important;
+            justify-content: center !important;
+
+        }
+
+        h1 {
+            color: #9290C3 !important;
+        }
+    </style>
 {% endblock %}

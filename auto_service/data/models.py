@@ -47,6 +47,13 @@ class Influencer(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+class CarType(models.Model):
+    brand_name = models.CharField(max_length=100)
+    model_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.brand_name} - {self.model_name}"
+
 
 class Car(models.Model):
     COLOR_CHOICES = [
@@ -61,24 +68,15 @@ class Car(models.Model):
         ("Yellow", "Yellow"),
         ("Other", "Other"),
     ]
-    ENGINE_CHOICES = [
-        ("Diesel", "Diesel"),
-        ("Gasoline", "Gasoline"),
-        ("Gas", "Gas"),
-        ("Hybrid", "Hybrid")
 
-    ]
-    make = models.CharField(max_length=55)
-    model = models.CharField(max_length=55)
+    car_indication = models.ForeignKey(CarType, on_delete=models.CASCADE)
     color = models.CharField(max_length=55, blank=True, choices=COLOR_CHOICES)
-    engine = models.CharField(max_length=55, blank=True, choices=ENGINE_CHOICES)
     date_built = models.DateField(blank=True, null=True)
     vin_number = models.CharField(max_length=55, blank=True)
     customer = models.ForeignKey(Customer, related_name='car', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.make} - {self.model}"
-
+        return f"{self.car_indication.brand_name} - {self.car_indication.model_name} - {self.color} - {self.customer.name}"
 
 class ServiceMan(models.Model):
     first_name = models.CharField(max_length=100)

@@ -1,46 +1,36 @@
-from datetime import timezone
-
+from rest_framework.views import APIView
 from django.views.generic import ListView, CreateView, DetailView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views import View
 from work_orders.forms import WorkOrderForm, SegmentForm, LaborForm, SparePartForm, MiscellaneousForm, \
     WorkOrderSearchForm, SparePartsSearchForm, WorkOrderNoteForm
 from work_orders.models import WorkOrder, Segment, Labor, SparePart, Miscellaneous
 from django.db.models import Q
-from data.models import SparePartWarehouse
+from data.models import SparePartWarehouse, Customer, Car
 from invoice.models import Invoice
+from rest_framework import viewsets
+from .serializers import WorkOrderSerializer, SegmentSerializer, CustomerSerializer, CarSerializer
+from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework import status
+from .services import work_order_json_response, create_work_order
+
+class WorkOrderListView(APIView):
+    def get(self, request):
+        data = work_order_json_response()
+        return Response(data)
 
 
-class WorkOrderListView(ListView):
-    model = WorkOrder
-    template_name = 'work_orders/work-order-list.html'
-    context_object_name = "work_orders"
-
-    def get_queryset(self):
-        return WorkOrder.objects.all()
-
-
-class CombinedCreateWorkOrderView(View):
-    template_name = 'work_orders/create-work-order.html'
-    success_url = reverse_lazy('home')
-
-    def get(self, request, *args, **kwargs):
-        work_order_form = WorkOrderForm()
-        segment_form = SegmentForm()
-        return render(request, self.template_name, {'work_order_form': work_order_form, 'segment_form': segment_form})
-
-    def post(self, request, *args, **kwargs):
-        work_order_form = WorkOrderForm(request.POST)
-        segment_form = SegmentForm(request.POST)
-        if work_order_form.is_valid() and segment_form.is_valid():
-            work_order = work_order_form.save()
-            segment = segment_form.save(commit=False)
-            segment.work_order = work_order
-            segment.save()
-            return redirect(self.success_url)
-
-        return render(request, self.template_name, {'work_order_form': work_order_form, 'segment_form': segment_form})
+class CombinedCreateWorkOrderView(APIView):
+    def post(self, request):
+        data = request.data
+        create_work_order(data)
+        return Response(
+            {
+                "message": "Work order created successfully.",
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 def add_segment_to_work_order(request, pk):
@@ -366,3 +356,71 @@ def invoice_file_view(request, pk):
     invoice = Invoice.objects.create(work_order=work_order.pk)
     invoice.save()
     return render(request, "work_orders/invoice-confirm.html", {"work_order": work_order, "invoice": invoice})
+
+
+class MyModelViewSet(viewsets.ModelViewSet):
+    queryset = WorkOrder.objects.all()
+    serializer_class = WorkOrderSerializer
+
+
+class FindCustomerView(APIView):
+    def get(self, request):
+        name = request.query_params.get('name')
+        numbers = request.query_params.get('numbers')
+
+        if not name and not numbers:
+            return Response("Please provide either name or numbers", status=status.HTTP_400_BAD_REQUEST)
+
+        customers = Customer.objects.all()
+        if name:
+            customers = customers.filter(name__icontains=name)
+        if numbers:
+            customers = customers.filter(number__icontains=numbers)
+
+        if not customers.exists():
+            return Response("No customers found", status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = CustomerSerializer(customers, many=True)
+        print(serializer)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FindWorkOrderView(APIView):
+    def get(self, request):
+        query = request.query_params.get('query')
+        print(query)
+        if not query:
+            return Response(
+                {"error": "Please provide a query."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+        if query.isdigit():
+
+            found_work_orders = WorkOrder.objects.filter(id__icontains=query)
+        else:
+            found_work_orders = WorkOrder.objects.filter(customer__name__icontains=query)
+
+        if not found_work_orders.exists():
+            return Response(
+                {"message": "No work orders found matching the query."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = WorkOrderSerializer(found_work_orders, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class SearchCustomerCarsView(APIView):
+    def get(self, request):
+        customer_id = request.GET.get("customerId")
+        if not customer_id:
+            return JsonResponse({"message": "Customer ID not provided"}, status=400)
+
+        cars = Car.objects.filter(customer__id=customer_id)
+        print(cars)
+        if not cars.exists():
+            return JsonResponse({"message": "No cars found for this customer"}, status=404)
+
+        car_list = [{"id": car.id, "make": car.car_indication.brand_name, "model": car.car_indication.model_name, "color": car.color} for car in cars]
+        return JsonResponse(car_list, safe=False)

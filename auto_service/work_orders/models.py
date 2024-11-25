@@ -12,9 +12,11 @@ class ActiveManager(models.Manager):
 
 
 class WorkOrder(models.Model):
+    PAYMENT_METHOD_CHOICES = [('Credit', "Credit"), ("Cash", "Cash")]
+
     customer = models.ForeignKey(Customer,related_name="customer", on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    payment = models.CharField(max_length=30, blank=True, choices=[('Credit', "Credit"), ("Cash", "Cash")])
+    payment = models.CharField(max_length=30, blank=True, choices=PAYMENT_METHOD_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     invoiced = models.BooleanField(default=False)
@@ -68,23 +70,25 @@ class WorkOrder(models.Model):
 
 class Segment(models.Model):
     def calculate_seg_total(self):
-        total = 0
-        for misc in self.misc.all():
-            mics_price = misc.price * misc.quantity
-            total += mics_price
-        for labor in self.labor.all():
-            labor_price = Decimal(labor.labor_price())
-            total += labor_price
-        for spare_parts in self.spare_part.all():
-            spare_part_price = spare_parts.price * spare_parts.quantity
-            total += spare_part_price
-        return total
+        ...
+        # total = 0
+        # for misc in self.misc.all():
+        #     mics_price = misc.price * misc.quantity
+        #     total += mics_price
+        # for labor in self.labor.all():
+        #     labor_price = Decimal(labor.labor_price())
+        #     total += labor_price
+        # for spare_parts in self.spare_part.all():
+        #     spare_part_price = spare_parts.price * spare_parts.quantity
+        #     total += spare_part_price
+        # return total
 
     WORK_DESCRIPTION = [("Maintenance", "Maintenance"),
                         ("Engine Repair", "Engine Repair"),
                         ("Transmission Repair", "Transmission Repair"),
                         ("Body and Painting", "Body and Painting"),
-                        ("Suspension Repair", "Suspension Repair"), ]
+                        ("Suspension Repair", "Suspension Repair"),
+                        ("New Work Task", "New Work Task"),]
     work_order = models.ForeignKey(WorkOrder, related_name='segment', on_delete=models.CASCADE)
     description_work = models.CharField(max_length=20, choices=WORK_DESCRIPTION)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[calculate_seg_total])
